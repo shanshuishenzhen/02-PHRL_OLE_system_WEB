@@ -13,7 +13,7 @@ from .serializers import (
     PaperGenerationSerializer, PaperGenerationCreateSerializer
 )
 from exam_system.question_bank.models import Question
-from user_management.permissions import IsAdminOrTeacherUser
+from exam_system.user_management.permissions import IsAdminOrTeacherUser
 import random
 
 

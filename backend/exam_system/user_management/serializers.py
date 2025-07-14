@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
-from .models import LoginLog
+from .models import LoginLog, Department, Class
 
 User = get_user_model()
 
@@ -10,12 +10,14 @@ class UserSerializer(serializers.ModelSerializer):
     """用户序列化器"""
     password = serializers.CharField(write_only=True, required=False)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
+    department_name = serializers.CharField(source='department.name', read_only=True)
+    class_name = serializers.CharField(source='class_info.name', read_only=True)
     
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'real_name', 'role', 'role_display',
-                 'department', 'phone', 'avatar', 'is_active', 'date_joined', 'last_login',
-                 'last_login_ip', 'created_at', 'updated_at']
+                 'department', 'department_name', 'class_info', 'class_name', 'phone', 'avatar', 
+                 'is_active', 'date_joined', 'last_login', 'last_login_ip', 'created_at', 'updated_at']
         read_only_fields = ['id', 'date_joined', 'last_login', 'last_login_ip', 'created_at', 'updated_at']
     
     def create(self, validated_data):
@@ -43,7 +45,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'password_confirm', 'real_name', 'role',
-                 'department', 'phone', 'avatar']
+                 'department', 'class_info', 'phone', 'avatar']
     
     def validate(self, attrs):
         if attrs['password'] != attrs.pop('password_confirm'):
@@ -57,7 +59,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             real_name=validated_data.get('real_name', ''),
             role=validated_data.get('role', 'student'),
-            department=validated_data.get('department', ''),
+            department=validated_data.get('department', None),
+            class_info=validated_data.get('class_info', None),
             phone=validated_data.get('phone', ''),
             avatar=validated_data.get('avatar', None)
         )
@@ -68,7 +71,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     """用户更新序列化器"""
     class Meta:
         model = User
-        fields = ['email', 'real_name', 'department', 'phone', 'avatar']
+        fields = ['email', 'real_name', 'department', 'class_info', 'phone', 'avatar']
 
 
 class PasswordChangeSerializer(serializers.Serializer):
@@ -140,3 +143,24 @@ class LoginLogSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'real_name', 'ip_address', 'user_agent',
                  'login_time', 'login_status', 'login_message']
         read_only_fields = fields
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    """部门序列化器"""
+    
+    class Meta:
+        model = Department
+        fields = ['id', 'name', 'description', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class ClassSerializer(serializers.ModelSerializer):
+    """班级序列化器"""
+    department_name = serializers.CharField(source='department.name', read_only=True)
+    teacher_name = serializers.CharField(source='teacher.real_name', read_only=True)
+    
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'department', 'department_name', 'teacher', 'teacher_name', 
+                 'description', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']

@@ -4,10 +4,11 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import LoginLog
+from .models import LoginLog, Department, Class
 from .serializers import (
     UserSerializer, UserCreateSerializer, UserUpdateSerializer,
-    PasswordChangeSerializer, LoginSerializer, LoginLogSerializer
+    PasswordChangeSerializer, LoginSerializer, LoginLogSerializer,
+    DepartmentSerializer, ClassSerializer
 )
 from .authentication import JWTAuthentication
 from .permissions import IsAdminUser, IsSelfOrAdmin
@@ -159,3 +160,50 @@ class LoginLogViewSet(viewsets.ReadOnlyModelViewSet):
         if not user.is_admin:
             queryset = queryset.filter(user=user)
         return queryset
+
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+    """部门视图集"""
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'created_at']
+    ordering = ['name']
+    
+    @action(detail=True, methods=['get'])
+    def users(self, request, pk=None):
+        """获取部门下的所有用户"""
+        department = self.get_object()
+        users = User.objects.filter(department=department)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def classes(self, request, pk=None):
+        """获取部门下的所有班级"""
+        department = self.get_object()
+        classes = Class.objects.filter(department=department)
+        serializer = ClassSerializer(classes, many=True)
+        return Response(serializer.data)
+
+
+class ClassViewSet(viewsets.ModelViewSet):
+    """班级视图集"""
+    queryset = Class.objects.all()
+    serializer_class = ClassSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['department']
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'created_at']
+    ordering = ['name']
+    
+    @action(detail=True, methods=['get'])
+    def students(self, request, pk=None):
+        """获取班级下的所有学生"""
+        class_obj = self.get_object()
+        students = User.objects.filter(class_info=class_obj, role='student')
+        serializer = UserSerializer(students, many=True)
+        return Response(serializer.data)

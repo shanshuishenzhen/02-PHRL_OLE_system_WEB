@@ -35,14 +35,16 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_filters',
     # 自定义应用
-    'user_management',
-    'question_bank',
-    'paper_management',
-    'exam_monitoring',
-    'score_management',
-    'marking_center',
-    'log_audit',
-    'api_gateway',
+    'exam_system.user_management',
+    'exam_system.question_bank',
+    'exam_system.paper_management',
+    'exam_system.exam_monitoring',
+    'exam_system.score_management',
+    'exam_system.marking_center',
+    'exam_system.log_audit',
+    'exam_system.api_gateway',
+    'exam_system.data_analysis',
+    'exam_system.common',
 ]
 
 MIDDLEWARE = [
@@ -149,7 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'user_management.authentication.JWTAuthentication',
+        'exam_system.user_management.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

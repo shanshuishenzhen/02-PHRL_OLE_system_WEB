@@ -33,15 +33,15 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     
     # 各模块API路由
-    path('api/users/', include('user_management.urls')),
-    path('api/questions/', include('question_bank.urls')),
-    path('api/papers/', include('paper_management.urls')),
-    path('api/exams/', include('exam_monitoring.urls')),
-    path('api/scores/', include('score_management.urls')),
-    path('api/marking/', include('marking_center.urls')),
-    path('api/logs/', include('log_audit.urls')),
-    path('api/gateway/', include('api_gateway.urls')),
-    path('api/analysis/', include('data_analysis.urls')),
+    path('api/users/', include('exam_system.user_management.urls')),
+    path('api/questions/', include('exam_system.question_bank.urls')),
+    path('api/papers/', include('exam_system.paper_management.urls')),
+    path('api/exams/', include('exam_system.exam_monitoring.urls')),
+    path('api/scores/', include('exam_system.score_management.urls')),
+    path('api/marking/', include('exam_system.marking_center.urls')),
+    path('api/logs/', include('exam_system.log_audit.urls')),
+    path('api/gateway/', include('exam_system.api_gateway.urls')),
+    path('api/analysis/', include('exam_system.data_analysis.urls')),
 ]
 
 # 开发环境下提供媒体文件访问

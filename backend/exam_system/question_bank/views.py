@@ -13,7 +13,7 @@ from .serializers import (
     KnowledgePointSerializer, QuestionSerializer, QuestionDetailSerializer,
     QuestionImportSerializer
 )
-from user_management.permissions import IsAdminOrTeacherUser
+from exam_system.user_management.permissions import IsAdminOrTeacherUser
 
 
 class QuestionBankViewSet(viewsets.ModelViewSet):
