@@ -1,0 +1,15 @@
+# 后端依赖
+Django>=4.2.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.0.0
+channels>=4.0.0
+channels-redis>=4.1.0
+psycopg2-binary>=2.9.6
+Pillow>=9.5.0
+python-dotenv>=1.0.0
+drf-yasg>=1.21.5
+django-filter>=23.2
+pyjwt>=2.7.0
+redis>=4.5.5
+gunicorn>=20.1.0
+whitenoise>=6.4.0
