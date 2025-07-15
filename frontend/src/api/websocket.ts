@@ -198,3 +198,29 @@ export enum WsMessageType {
   NOTIFICATION = 'notification',
   STUDENT_ACTION = 'student_action'
 }
+
+// 测试警告功能
+export function testWarning(message: string = '检测到异常行为'): void {
+  if (socket?.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: WsMessageType.WARNING,
+      data: {
+        title: '测试警告',
+        content: message
+      }
+    }))
+  }
+}
+
+// 测试强制提交功能
+export function testForceSubmit(): void {
+  if (socket?.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: WsMessageType.COMMAND,
+      data: {
+        command: 'force_submit',
+        message: '监考员已强制提交您的考试'
+      }
+    }))
+  }
+}

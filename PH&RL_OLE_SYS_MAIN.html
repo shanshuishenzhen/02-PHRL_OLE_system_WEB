@@ -1,0 +1,255 @@
+<!-- 主页面布局示例（Tailwind CSS + Font Awesome） -->
+<div class="min-h-screen bg-gray-50 flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-graduation-cap text-2xl text-blue-600"></i>
+        <h1 class="text-xl font-bold text-gray-800">在线考试管理系统</h1>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <input type="text" placeholder="搜索考生/试卷..." 
+                 class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+        
+        <div class="flex items-center space-x-1 text-sm">
+          <span class="text-gray-600">管理员</span>
+          <i class="fa fa-user-circle text-gray-500"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <!-- 数据总览 -->
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">考试总览</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-500 text-sm">当前在线考生</p>
+              <h3 class="text-2xl font-bold text-gray-800">328</h3>
+            </div>
+            <div class="bg-blue-100 p-2 rounded-full">
+              <i class="fa fa-users text-blue-500"></i>
+            </div>
+          </div>
+          <div class="mt-2 text-sm">
+            <span class="text-green-500"><i class="fa fa-arrow-up"></i> 12%</span>
+            <span class="text-gray-500 ml-1">较上一场考试</span>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-500 text-sm">已完成考试</p>
+              <h3 class="text-2xl font-bold text-gray-800">176</h3>
+            </div>
+            <div class="bg-green-100 p-2 rounded-full">
+              <i class="fa fa-check-circle text-green-500"></i>
+            </div>
+          </div>
+          <div class="mt-2 text-sm">
+            <span class="text-gray-500">完成率: 53.6%</span>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-500 text-sm">异常考生</p>
+              <h3 class="text-2xl font-bold text-gray-800">7</h3>
+            </div>
+            <div class="bg-yellow-100 p-2 rounded-full">
+              <i class="fa fa-exclamation-triangle text-yellow-500"></i>
+            </div>
+          </div>
+          <div class="mt-2 text-sm">
+            <span class="text-yellow-500"><i class="fa fa-arrow-up"></i> 2</span>
+            <span class="text-gray-500 ml-1">较5分钟前</span>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-500 text-sm">服务器负载</p>
+              <h3 class="text-2xl font-bold text-gray-800">68%</h3>
+            </div>
+            <div class="bg-red-100 p-2 rounded-full">
+              <i class="fa fa-server text-red-500"></i>
+            </div>
+          </div>
+          <div class="mt-2 text-sm">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-red-500 h-2 rounded-full" style="width: 68%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 考试监控 -->
+    <section class="mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800">实时考试监控</h2>
+        <div class="flex space-x-2">
+          <button class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm">
+            <i class="fa fa-refresh mr-1"></i> 刷新
+          </button>
+          <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm">
+            <i class="fa fa-filter mr-1"></i> 筛选
+          </button>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">考试名称</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">考生总数</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">已交卷</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">异常数</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">剩余时间</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">电工中级技能认证考试</div>
+                      <div class="text-xs text-gray-500">2025-07-15 09:00-11:30</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">500</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    176
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    7
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <div class="flex items-center">
+                    <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                      <div class="bg-yellow-500 h-2 rounded-full" style="width: 35%"></div>
+                    </div>
+                    <span>1小时23分钟</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <a href="#" class="text-blue-600 hover:text-blue-900 mr-3">查看详情</a>
+                  <a href="#" class="text-red-600 hover:text-red-900">结束考试</a>
+                </td>
+              </tr>
+              <!-- 其他考试记录... -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 考生监控网格 -->
+    <section>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800">考生实时监控</h2>
+        <div class="flex space-x-2">
+          <div class="relative">
+            <select class="pl-3 pr-10 py-1 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option>全部考生</option>
+              <option>异常考生</option>
+              <option>未交卷考生</option>
+            </select>
+          </div>
+          <button class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm">
+            <i class="fa fa-cog mr-1"></i> 设置
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <!-- 考生卡片示例 - 正常状态 -->
+        <div class="bg-white rounded-lg shadow overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-200">
+          <div class="relative">
+            <img src="https://picsum.photos/400/300?random=1" alt="考生屏幕截图" class="w-full h-48 object-cover">
+            <div class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+              正常
+            </div>
+            <div class="absolute top-2 right-2 bg-gray-700 text-white text-xs font-bold px-2 py-1 rounded">
+              李小明
+            </div>
+          </div>
+          <div class="p-3">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-800">ID: 2025001</span>
+              <span class="text-xs text-gray-500">切屏: 0</span>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500">
+              <span>答题进度: 75%</span>
+              <span>剩余时间: 83分钟</span>
+            </div>
+            <div class="mt-2 flex space-x-2">
+              <button class="w-full px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200">
+                <i class="fa fa-eye mr-1"></i> 全屏查看
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 考生卡片示例 - 异常状态 -->
+        <div class="bg-white rounded-lg shadow overflow-hidden border border-yellow-300 hover:border-yellow-400 transition-all duration-200">
+          <div class="relative">
+            <img src="https://picsum.photos/400/300?random=2" alt="考生屏幕截图" class="w-full h-48 object-cover">
+            <div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
+              异常
+            </div>
+            <div class="absolute top-2 right-2 bg-gray-700 text-white text-xs font-bold px-2 py-1 rounded">
+              王小红
+            </div>
+          </div>
+          <div class="p-3">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-800">ID: 2025032</span>
+              <span class="text-xs text-yellow-600 font-medium">切屏: 5</span>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500">
+              <span>答题进度: 42%</span>
+              <span>剩余时间: 83分钟</span>
+            </div>
+            <div class="mt-2 flex space-x-2">
+              <button class="w-1/2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs hover:bg-yellow-200">
+                <i class="fa fa-bell mr-1"></i> 警告
+              </button>
+              <button class="w-1/2 px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200">
+                <i class="fa fa-eye mr-1"></i> 查看
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 更多考生卡片... -->
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-white border-t border-gray-200 py-4">
+    <div class="container mx-auto px-4 text-center text-sm text-gray-500">
+      <p>© 2025 职业技能等级认证考试系统 | 版本 v1.0.0</p>
+    </div>
+  </footer>
+</div>

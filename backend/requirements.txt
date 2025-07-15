@@ -1,6 +1,7 @@
 # 后端依赖
 Django>=4.2.0
 djangorestframework>=3.14.0
+djangorestframework-simplejwt>=5.2.2
 django-cors-headers>=4.0.0
 channels>=4.0.0
 channels-redis>=4.1.0

@@ -31,9 +31,9 @@ class QuestionTypeAdmin(admin.ModelAdmin):
 
 @admin.register(DifficultyLevel)
 class DifficultyLevelAdmin(admin.ModelAdmin):
-    list_display = ('level', 'name', 'description')
+    list_display = ('level', 'get_level_display', 'description')
     list_filter = ('level',)
-    search_fields = ('name', 'description')
+    search_fields = ('description',)
     ordering = ('level',)
 
 
@@ -72,10 +72,8 @@ class QuestionOptionAdmin(admin.ModelAdmin):
 
 @admin.register(QuestionImage)
 class QuestionImageAdmin(admin.ModelAdmin):
-    list_display = ('question', 'image', 'description', 'created_at')
-    list_filter = ('created_at',)
+    list_display = ('question', 'image', 'description')
     search_fields = ('question__content', 'description')
-    ordering = ('-created_at',)
 
 
 @admin.register(QuestionImport)

@@ -1,6 +1,13 @@
 <template>
   <div class="exam-system">
-    <el-container>
+    <el-alert
+      v-if="error"
+      :title="error"
+      type="error"
+      show-icon
+      class="error-alert"
+    />
+    <el-container v-if="!loading">
       <el-header>
         <h1>职业技能等级认证考试系统</h1>
         <div class="user-info">
@@ -48,6 +55,17 @@ import { defineComponent, ref, onMounted } from 'vue'
 import { initWebSocket, closeWebSocket } from '@/api/websocket'
 import axios from 'axios'
 
+interface ExamData {
+  student_name: string
+  exam_id: string
+  duration: number
+  questions: Array<{
+    content: string
+    options: string[]
+    answer?: number
+  }>
+}
+
 export default defineComponent({
   name: 'ExamSystem',
   setup() {
@@ -58,12 +76,16 @@ export default defineComponent({
 
     const remainingTime = ref(0)
     const activeTab = ref('0')
-    const questions = ref<any[]>([])
+    const loading = ref(true)
+    const error = ref('')
+    const questions = ref<ExamData['questions']>([])
     
     // 获取考试数据
     const fetchExamData = async () => {
+      loading.value = true
+      error.value = ''
       try {
-        const response = await axios.get('/api/exam/current')
+        const response = await axios.get<ExamData>('/api/exam/current')
         const data = response.data
         userInfo.value = {
           name: data.student_name,
@@ -74,8 +96,11 @@ export default defineComponent({
         
         // 初始化WebSocket监控
         initWebSocket(data.exam_id)
-      } catch (error) {
-        console.error('获取考试数据失败:', error)
+      } catch (err) {
+        console.error('获取考试数据失败:', err)
+        error.value = '获取考试数据失败，请刷新重试'
+      } finally {
+        loading.value = false
       }
     }
 
@@ -100,7 +125,10 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      console.log('ExamSystem组件已挂载')
       fetchExamData()
+        .then(() => console.log('考试数据加载完成'))
+        .catch(err => console.error('考试数据加载失败:', err))
     })
 
     return {
@@ -109,7 +137,9 @@ export default defineComponent({
       activeTab,
       questions,
       formatTime,
-      submitExam
+      submitExam,
+      loading,
+      error
     }
   }
 })
@@ -118,6 +148,9 @@ export default defineComponent({
 <style scoped>
 .exam-system {
   padding: 20px;
+}
+.error-alert {
+  margin-bottom: 20px;
 }
 .user-info {
   float: right;
