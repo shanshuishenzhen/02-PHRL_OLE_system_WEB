@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 登录</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #303133;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .login-container {
+      width: 400px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .login-header h1 {
+      color: #409EFF;
+      margin: 0;
+      font-size: 24px;
+    }
+    .login-header p {
+      color: #909399;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #606266;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.3s;
+    }
+    .form-group input:focus {
+      border-color: #409EFF;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+    }
+    .form-group .error-message {
+      color: #F56C6C;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+    .form-group.error input {
+      border-color: #F56C6C;
+    }
+    .form-group.error .error-message {
+      display: block;
+    }
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .remember-me input {
+      margin-right: 8px;
+    }
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #409EFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .login-button:hover {
+      background-color: #66b1ff;
+    }
+    .login-button:disabled {
+      background-color: #a0cfff;
+      cursor: not-allowed;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #909399;
+    }
+    .login-footer a {
+      color: #409EFF;
+      text-decoration: none;
+    }
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .login-options a {
+      color: #409EFF;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .login-options a:hover {
+      text-decoration: underline;
+    }
+    .alert {
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .alert-success {
+      background-color: #f0f9eb;
+      color: #67C23A;
+      border: 1px solid #e1f3d8;
+    }
+    .alert-error {
+      background-color: #fef0f0;
+      color: #F56C6C;
+      border: 1px solid #fde2e2;
+    }
+    .user-type-selector {
+      display: flex;
+      margin-bottom: 20px;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .user-type-option {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-color: #f5f7fa;
+    }
+    .user-type-option.active {
+      background-color: #409EFF;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>职业技能等级认证考试系统</h1>
+      <p>请登录以访问系统功能</p>
+    </div>
+
+    <div class="alert alert-success" id="success-alert"></div>
+    <div class="alert alert-error" id="error-alert"></div>
+
+    <div class="user-type-selector">
+      <div class="user-type-option active" data-type="student">考生</div>
+      <div class="user-type-option" data-type="teacher">考评员</div>
+      <div class="user-type-option" data-type="admin">管理员</div>
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+        <div class="error-message">请输入有效的用户名</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" name="password" placeholder="请输入密码" required>
+        <div class="error-message">请输入有效的密码</div>
+      </div>
+
+      <div class="remember-me">
+        <input type="checkbox" id="remember-me" name="remember-me">
+        <label for="remember-me">记住我</label>
+      </div>
+
+      <div class="login-options">
+        <a href="#">忘记密码?</a>
+        <a href="debug-dashboard.html">调试面板</a>
+      </div>
+
+      <button type="submit" class="login-button" id="login-button">登录</button>
+    </form>
+
+    <div class="login-footer">
+      <p>没有账号? <a href="#">联系管理员</a></p>
+    </div>
+  </div>
+
+  <script>
+    // 获取DOM元素
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    const successAlert = document.getElementById('success-alert');
+    const errorAlert = document.getElementById('error-alert');
+    const userTypeOptions = document.querySelectorAll('.user-type-option');
+
+    // 用户类型选择
+    let selectedUserType = 'student';
+    userTypeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        userTypeOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        selectedUserType = option.getAttribute('data-type');
+      });
+    });
+
+    // 表单验证
+    function validateForm() {
+      let isValid = true;
+
+      // 验证用户名
+      if (!usernameInput.value.trim()) {
+        usernameInput.parentElement.classList.add('error');
+        usernameInput.parentElement.querySelector('.error-message').textContent = '请输入用户名';
+        isValid = false;
+      } else {
+        usernameInput.parentElement.classList.remove('error');
+      }
+
+      // 验证密码
+      if (!passwordInput.value.trim()) {
+        passwordInput.parentElement.classList.add('error');
+        passwordInput.parentElement.querySelector('.error-message').textContent = '请输入密码';
+        isValid = false;
+      } else if (passwordInput.value.length < 6) {
+        passwordInput.parentElement.classList.add('error');
+        passwordInput.parentElement.querySelector('.error-message').textContent = '密码长度不能少于6位';
+        isValid = false;
+      } else {
+        passwordInput.parentElement.classList.remove('error');
+      }
+
+      return isValid;
+    }
+
+    // 显示提示信息
+    function showAlert(type, message) {
+      if (type === 'success') {
+        successAlert.textContent = message;
+        successAlert.style.display = 'block';
+        errorAlert.style.display = 'none';
+      } else {
+        errorAlert.textContent = message;
+        errorAlert.style.display = 'block';
+        successAlert.style.display = 'none';
+      }
+
+      // 5秒后自动隐藏
+      setTimeout(() => {
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
+      }, 5000);
+    }
+
+    // 处理登录请求
+    async function handleLogin(event) {
+      event.preventDefault();
+
+      // 表单验证
+      if (!validateForm()) {
+        return;
+      }
+
+      // 禁用登录按钮
+      loginButton.disabled = true;
+      loginButton.textContent = '登录中...';
+
+      try {
+        // 构建登录数据
+        const loginData = {
+          username: usernameInput.value.trim(),
+          password: passwordInput.value,
+          user_type: selectedUserType
+        };
+
+        // 发送登录请求
+        const response = await fetch('/api/users/auth/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(loginData)
+        });
+
+        // 处理响应
+        if (response.ok) {
+          const data = await response.json();
+          
+          // 保存令牌到本地存储
+          localStorage.setItem('access_token', data.access);
+          localStorage.setItem('refresh_token', data.refresh);
+          localStorage.setItem('user_type', selectedUserType);
+          
+          // 显示成功消息
+          showAlert('success', '登录成功，正在跳转...');
+          
+          // 根据用户类型跳转到不同页面
+          setTimeout(() => {
+            if (selectedUserType === 'admin') {
+              window.location.href = 'debug-dashboard.html';
+            } else if (selectedUserType === 'teacher') {
+              window.location.href = 'debug-dashboard.html';
+            } else {
+              window.location.href = 'debug-dashboard.html';
+            }
+          }, 1500);
+        } else {
+          // 处理错误响应
+          const errorData = await response.json();
+          showAlert('error', errorData.detail || '登录失败，请检查用户名和密码');
+        }
+      } catch (error) {
+        // 处理网络错误
+        console.error('登录请求失败:', error);
+        showAlert('error', '网络错误，请稍后重试');
+      } finally {
+        // 恢复登录按钮
+        loginButton.disabled = false;
+        loginButton.textContent = '登录';
+      }
+    }
+
+    // 添加事件监听器
+    loginForm.addEventListener('submit', handleLogin);
+
+    // 调试模式 - 快速登录
+    function debugLogin() {
+      // 检查URL参数
+      const urlParams = new URLSearchParams(window.location.search);
+      const debug = urlParams.get('debug');
+      
+      if (debug === 'true') {
+        // 自动填充表单
+        usernameInput.value = 'admin';
+        passwordInput.value = '123456';
+        
+        // 选择管理员类型
+        userTypeOptions.forEach(opt => opt.classList.remove('active'));
+        document.querySelector('.user-type-option[data-type="admin"]').classList.add('active');
+        selectedUserType = 'admin';
+        
+        // 显示提示
+        showAlert('success', '调试模式已启用，点击登录按钮继续');
+      }
+    }
+
+    // 页面加载时执行
+    window.addEventListener('load', debugLogin);
+  </script>
+</body>
+</html>

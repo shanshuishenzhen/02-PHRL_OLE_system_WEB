@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 用户管理模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar.collapsed {
+      width: 64px;
+    }
+    .sidebar.collapsed .sidebar-title,
+    .sidebar.collapsed .sidebar-subtitle,
+    .sidebar.collapsed .menu-title {
+      display: none;
+    }
+    .sidebar.collapsed .menu-icon {
+      margin-right: 0;
+    }
+    .main-content.expanded {
+      margin-left: -186px;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .table th:hover {
+      background-color: #f0f0f0;
+    }
+    .table tbody tr:hover {
+      background-color: #f5f7fa;
+    }
+    .table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+      border-radius: 4px;
+      font-size: 14px;
+      user-select: none;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+      box-shadow: 0 0 5px rgba(24, 144, 255, 0.2);
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+      font-weight: 500;
+    }
+    .page-btn:disabled,
+    .page-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: #d9d9d9;
+      color: #d9d9d9;
+      pointer-events: none;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    
+    /* 排序图标样式 */
+    .sort-icon {
+      display: inline-block;
+      margin-left: 5px;
+      font-size: 12px;
+      color: #999;
+      transition: color 0.2s ease;
+    }
+    th:hover .sort-icon {
+      color: #1890ff;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    /* 复选框样式 */
+    input[type="checkbox"] {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      position: relative;
+      vertical-align: middle;
+      appearance: none;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    
+    input[type="checkbox"]:checked {
+      background-color: #1890ff;
+      border-color: #1890ff;
+    }
+    
+    input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .batch-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
+    }
+    
+    .batch-actions.active {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">用户管理模块</div>
+        <div class="sidebar-subtitle">User Management</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">👥</span>
+          <span class="menu-title">用户列表</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">🔑</span>
+          <span class="menu-title">角色权限</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">👨‍🎓</span>
+          <span class="menu-title">考生管理</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">👨‍🏫</span>
+          <span class="menu-title">考评员管理</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">用户统计</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">用户管理</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">用户列表</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div class="user-name">管理员</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">用户列表</div>
+        <div class="card">
+          <div class="card-header">
+            <span>用户管理</span>
+            <button class="btn btn-primary">
+              <span class="btn-icon">+</span> 添加用户
+            </button>
+            <button class="btn btn-success" style="margin-left: 10px; background-color: #67c23a;">
+              <span class="btn-icon">📊</span> Excel导入
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <input type="text" class="search-input" placeholder="搜索用户名、姓名、角色...">
+              <select class="search-filter">
+                <option value="all">所有字段</option>
+                <option value="username">用户名</option>
+                <option value="name">姓名</option>
+                <option value="role">角色</option>
+                <option value="status">状态</option>
+              </select>
+              <button class="btn btn-primary search-btn">搜索</button>
+            </div>
+            <div class="batch-actions" style="margin: 10px 0; display: none;">
+              <button class="btn btn-danger batch-delete-btn">批量删除</button>
+              <button class="btn btn-warning batch-disable-btn">批量禁用</button>
+              <button class="btn btn-success batch-enable-btn">批量启用</button>
+              <span class="selected-count">已选择 0 项</span>
+            </div>
+            <div class="tabs">
+              <div class="tab active">全部用户</div>
+              <div class="tab">管理员</div>
+              <div class="tab">考评员</div>
+              <div class="tab">考生</div>
+            </div>
+            <div class="tab-content">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="select-all-checkbox"></th>
+                    <th>身份证号码 <span class="sort-icon">↕</span></th>
+                    <th>用户名 <span class="sort-icon">↕</span></th>
+                    <th>姓名 <span class="sort-icon">↕</span></th>
+                    <th>角色 <span class="sort-icon">↕</span></th>
+                    <th>状态 <span class="sort-icon">↕</span></th>
+                    <th>联系方式 <span class="sort-icon">↕</span></th>
+                    <th>邮箱 <span class="sort-icon">↕</span></th>
+                    <th>部门 <span class="sort-icon">↕</span></th>
+                    <th>职位 <span class="sort-icon">↕</span></th>
+                    <th>创建时间 <span class="sort-icon">↕</span></th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="user-table-body">
+                  <tr data-id="1002">
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>1002</td>
+                    <td>teacher1</td>
+                    <td>张考评员</td>
+                    <td><span class="badge badge-warning">考评员</span></td>
+                    <td><span class="badge badge-success">正常</span></td>
+                    <td>13800138001</td>
+                    <td>teacher1@example.com</td>
+                    <td>教学部</td>
+                    <td>高级考评员</td>
+                    <td>2023-01-02 09:15:00</td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-danger">禁用</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="1003">
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>1003</td>
+                    <td>student1</td>
+                    <td>李同学</td>
+                    <td><span class="badge badge-success">考生</span></td>
+                    <td><span class="badge badge-success">正常</span></td>
+                    <td>13800138002</td>
+                    <td>student1@example.com</td>
+                    <td>学生部</td>
+                    <td>学生</td>
+                    <td>2023-01-03 10:30:00</td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-danger">禁用</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="1004">
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>1004</td>
+                    <td>student2</td>
+                    <td>王同学</td>
+                    <td><span class="badge badge-success">考生</span></td>
+                    <td><span class="badge badge-danger">禁用</span></td>
+                    <td>13800138003</td>
+                    <td>student2@example.com</td>
+                    <td>学生部</td>
+                    <td>学生</td>
+                    <td>2023-01-04 11:45:00</td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-primary">启用</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="table-footer">
+                <div class="page-size">
+                  每页显示：
+                  <select id="page-size-select">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </div>
+                <div class="pagination">
+                  <div class="page-btn" id="first-page-btn">«</div>
+                  <div class="page-btn" id="prev-page-btn">‹</div>
+                  <div class="page-numbers" id="page-numbers">
+                    <div class="page-btn active">1</div>
+                    <div class="page-btn">2</div>
+                    <div class="page-btn">3</div>
+                  </div>
+                  <div class="page-btn" id="next-page-btn">›</div>
+                  <div class="page-btn" id="last-page-btn">»</div>
+                  <div class="page-info">
+                    <span id="current-page">第 1 页</span> / <span id="total-pages">共 3 页</span>
+                    <span class="total-records">共 <span id="total-records">42</span> 条记录</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 用户数据
+    let userData = [
+      { idCard: '110101199001011234', username: 'admin', name: '管理员', role: '管理员', status: '正常', contact: '13900000001', email: 'admin@example.com', department: '管理部', position: '超级管理员', createTime: '2023-01-01 08:00:00' },
+      { idCard: '110101199001021235', username: 'teacher1', name: '张考评员', role: '考评员', status: '正常', contact: '13800138001', email: 'teacher1@example.com', department: '教学部', position: '高级考评员', createTime: '2023-01-02 09:15:00' },
+      { idCard: '110101199001031236', username: 'student1', name: '李同学', role: '考生', status: '正常', contact: '13800138002', email: 'student1@example.com', department: '学生部', position: '学生', createTime: '2023-01-03 10:30:00' },
+      { idCard: '110101199001041237', username: 'student2', name: '王同学', role: '考生', status: '禁用', contact: '13800138003', email: 'student2@example.com', department: '学生部', position: '学生', createTime: '2023-01-04 11:45:00' },
+      { idCard: '110101199001051238', username: 'teacher2', name: '刘考评员', role: '考评员', status: '正常', contact: '13800138004', email: 'teacher2@example.com', department: '教学部', position: '考评员', createTime: '2023-01-05 13:00:00' },
+      { idCard: '110101199001061239', username: 'student3', name: '赵同学', role: '考生', status: '正常', contact: '13800138005', email: 'student3@example.com', department: '学生部', position: '学生', createTime: '2023-01-06 14:15:00' },
+      { idCard: '110101199001071240', username: 'student4', name: '钱同学', role: '考生', status: '禁用', contact: '13800138006', email: 'student4@example.com', department: '学生部', position: '学生', createTime: '2023-01-07 15:30:00' },
+      { idCard: '110101199001081241', username: 'teacher3', name: '孙考评员', role: '考评员', status: '禁用', contact: '13800138007', email: 'teacher3@example.com', department: '教学部', position: '考评员', createTime: '2023-01-08 16:45:00' },
+      { idCard: '110101199001091242', username: 'student5', name: '周同学', role: '考生', status: '正常', contact: '13800138008', email: 'student5@example.com', department: '学生部', position: '学生', createTime: '2023-01-09 17:00:00' },
+      { idCard: '110101199001101243', username: 'student6', name: '吴同学', role: '考生', status: '正常', contact: '13800138009', email: 'student6@example.com', department: '学生部', position: '学生', createTime: '2023-01-10 18:15:00' },
+      { idCard: '110101199001111244', username: 'student7', name: '郑同学', role: '考生', status: '正常', contact: '13800138010', email: 'student7@example.com', department: '学生部', position: '学生', createTime: '2023-01-11 19:30:00' },
+      { idCard: '110101199001121245', username: 'student8', name: '冯同学', role: '考生', status: '禁用', contact: '13800138011', email: 'student8@example.com', department: '学生部', position: '学生', createTime: '2023-01-12 20:45:00' },
+    ];
+    
+    // 分页相关变量
+    let currentPage = 1;
+    let pageSize = 10;
+    let totalPages = Math.ceil(userData.length / pageSize);
+    let filteredData = [...userData];
+    let sortField = 'idCard';
+    let sortDirection = 'asc';
+    let selectedRows = new Set();
+    
+    // 用户权限控制
+    let currentUserRole = '';
+    let isAuthenticated = true; // 默认允许进入页面，无需登录
+    let isSuperAdmin = false;
+
+    // 检查用户登录状态和权限
+    function checkUserAuth() {
+      // 从localStorage获取登录信息
+      const loginInfo = JSON.parse(localStorage.getItem('debug_login_info') || '{}');
+      const token = localStorage.getItem('access_token');
+      
+      // 设置当前用户角色
+      currentUserRole = loginInfo.role || '';
+      
+      // 检查是否是超级管理员
+      isSuperAdmin = loginInfo.username === 'admin' && loginInfo.role === 'admin';
+      
+      // 根据角色设置界面权限
+      setupUIByRole();
+    }
+
+    // 更新用户信息显示
+    function updateUserInfoDisplay() {
+      const userNameElement = document.querySelector('.user-name');
+      const userAvatarElement = document.querySelector('.user-avatar');
+      
+      if (isSuperAdmin) {
+        if (userNameElement) userNameElement.textContent = '超级管理员';
+        if (userAvatarElement) userAvatarElement.textContent = 'S';
+      } else {
+        if (userNameElement) userNameElement.textContent = '普通用户';
+        if (userAvatarElement) userAvatarElement.textContent = 'U';
+      }
+    }
+
+    // 根据角色设置界面权限
+    function setupUIByRole() {
+      // 获取所有操作按钮
+      const actionButtons = document.querySelectorAll('.action-btns button');
+      const addUserButton = document.querySelector('.card-header .btn-primary');
+      
+      // 考生管理相关元素
+      const allTab = document.querySelector('.tab:nth-child(1)');
+      const adminTab = document.querySelector('.tab:nth-child(2)');
+      const teacherTab = document.querySelector('.tab:nth-child(3)');
+      const studentTab = document.querySelector('.tab:nth-child(4)');
+      
+      // 默认显示考生标签页
+      if (studentTab) {
+        setTimeout(() => {
+          studentTab.click();
+        }, 100);
+      }
+      
+      // 设置标签页权限
+      if (allTab) {
+        allTab.addEventListener('click', function(e) {
+          if (!isSuperAdmin) {
+            e.preventDefault();
+            showLoginModal('需要超级管理员权限才能查看所有用户');
+            studentTab.click();
+            return false;
+          }
+        });
+      }
+      
+      // 管理员标签页权限
+      if (adminTab) {
+        adminTab.addEventListener('click', function(e) {
+          if (!isSuperAdmin) {
+            e.preventDefault();
+            showLoginModal('需要超级管理员权限才能管理管理员账户');
+            studentTab.click();
+            return false;
+          }
+        });
+      }
+      
+      // 考评员标签页权限
+      if (teacherTab) {
+        teacherTab.addEventListener('click', function(e) {
+          if (!isSuperAdmin) {
+            e.preventDefault();
+            showLoginModal('需要超级管理员权限才能管理考评员账户');
+            studentTab.click();
+            return false;
+          }
+        });
+      }
+      
+      // 设置添加用户按钮权限
+      if (addUserButton) {
+        addUserButton.addEventListener('click', function(e) {
+          // 检查当前激活的标签页
+          const activeTab = document.querySelector('.tab.active');
+          const isStudentTab = activeTab && activeTab.textContent.trim() === '考生';
+          
+          // 如果不是考生标签页且不是超级管理员，则需要登录
+          if (!isStudentTab && !isSuperAdmin) {
+            e.preventDefault();
+            showLoginModal('需要超级管理员权限才能添加管理员和考评员账户');
+            return false;
+          }
+          
+          // 显示添加用户模态框
+          showAddUserModal();
+        });
+      }
+      
+      // 显示添加用户模态框
+      function showAddUserModal() {
+        // 创建模态框元素
+        const modal = document.createElement('div');
+        modal.className = 'add-user-modal';
+        
+        // 获取当前激活的标签页来确定默认角色
+        const activeTab = document.querySelector('.tab.active');
+        let defaultRole = '考生';
+        if (activeTab) {
+          const tabText = activeTab.textContent.trim();
+          if (tabText === '管理员') defaultRole = '管理员';
+          else if (tabText === '考评员') defaultRole = '考评员';
+        }
+        
+        modal.innerHTML = `
+          <div class="add-user-modal-content">
+            <div class="add-user-modal-header">
+              <h3>添加用户</h3>
+              <span class="close-modal">&times;</span>
+            </div>
+            <div class="add-user-modal-body">
+              <div class="form-group">
+                <label for="new-idcard">身份证号码</label>
+                <input type="text" id="new-idcard" placeholder="请输入身份证号码" required>
+              </div>
+              <div class="form-group">
+                <label for="new-username">用户名</label>
+                <input type="text" id="new-username" placeholder="请输入用户名" required>
+              </div>
+              <div class="form-group">
+                <label for="new-name">姓名</label>
+                <input type="text" id="new-name" placeholder="请输入姓名" required>
+              </div>
+              <div class="form-group">
+                <label for="new-password">密码</label>
+                <input type="password" id="new-password" placeholder="请输入密码" required>
+              </div>
+              <div class="form-group">
+                <label for="new-role">角色</label>
+                <select id="new-role">
+                  <option value="考生" ${defaultRole === '考生' ? 'selected' : ''}>考生</option>
+                  <option value="考评员" ${defaultRole === '考评员' ? 'selected' : ''}>考评员</option>
+                  <option value="管理员" ${defaultRole === '管理员' ? 'selected' : ''}>管理员</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="new-status">状态</label>
+                <select id="new-status">
+                  <option value="正常" selected>正常</option>
+                  <option value="禁用">禁用</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="new-contact">联系方式</label>
+                <input type="text" id="new-contact" placeholder="请输入联系方式">
+              </div>
+              <div class="form-group">
+                <label for="new-email">邮箱</label>
+                <input type="email" id="new-email" placeholder="请输入邮箱">
+              </div>
+              <div class="form-group">
+                <label for="new-department">部门</label>
+                <input type="text" id="new-department" placeholder="请输入部门">
+              </div>
+              <div class="form-group">
+                <label for="new-position">职位</label>
+                <input type="text" id="new-position" placeholder="请输入职位">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-secondary cancel-add">取消</button>
+              <button class="btn btn-primary confirm-add">确认添加</button>
+            </div>
+          </div>
+        `;
+        
+        // 添加模态框样式
+        const style = document.createElement('style');
+        style.textContent = `
+          .add-user-modal {
+            display: block;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+          }
+          .add-user-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+          }
+          .add-user-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+          }
+          .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+          }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(modal);
+        
+        // 关闭模态框
+        const closeBtn = modal.querySelector('.close-modal');
+        const cancelBtn = modal.querySelector('.cancel-add');
+        
+        const closeModal = () => {
+          document.body.removeChild(modal);
+        };
+        
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        
+        // 确认添加按钮点击事件
+        const confirmBtn = modal.querySelector('.confirm-add');
+        confirmBtn.addEventListener('click', function() {
+          // 获取表单数据
+          const idCard = document.getElementById('new-idcard').value.trim();
+          const username = document.getElementById('new-username').value.trim();
+          const name = document.getElementById('new-name').value.trim();
+          const password = document.getElementById('new-password').value.trim();
+          const contact = document.getElementById('new-contact').value.trim();
+          const role = document.getElementById('new-role').value;
+          const status = document.getElementById('new-status').value;
+          const email = document.getElementById('new-email').value.trim();
+          const department = document.getElementById('new-department').value.trim();
+          const position = document.getElementById('new-position').value.trim();
+          
+          // 表单验证
+          if (!idCard || !username || !name || !password) {
+            alert('请填写必填字段：身份证号码、用户名、姓名和密码');
+            return;
+          }
+          
+          // 检查身份证号码是否已存在
+          if (userData.some(user => user.idCard === idCard)) {
+            alert('身份证号码已存在，请检查输入');
+            return;
+          }
+          
+          // 检查用户名是否已存在
+          const userExists = userData.some(user => user.username === username);
+          if (userExists) {
+            alert('用户名已存在，请使用其他用户名');
+            return;
+          }
+          
+          // 创建新用户
+          const newUser = {
+            idCard,
+            username,
+            name,
+            role,
+            status,
+            contact: contact || '-',
+            email: email || '-',
+            department: department || '-',
+            position: position || '-',
+            createTime: new Date().toLocaleString('zh-CN', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false
+            }).replace(/\//g, '-')
+          };
+          
+          // 添加到用户数据
+          userData.push(newUser);
+          filteredData.push(newUser);
+          
+          // 关闭模态框
+          closeModal();
+          
+          // 显示成功提示
+          showNotification(`成功添加用户：${username}`, 'success');
+          
+          // 刷新用户表格
+          renderUserTable();
+        });
+      }
+      
+      // 设置操作按钮权限 - 更细致的权限控制
+      actionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          const row = this.closest('tr');
+          const roleCell = row.querySelector('td:nth-child(4)');
+          const role = roleCell ? roleCell.textContent.trim() : '';
+          const buttonText = this.textContent.trim();
+          
+          // 如果是管理员或考评员账户操作，需要超级管理员权限
+          if ((role.includes('管理员') || role.includes('考评员')) && !isSuperAdmin) {
+            e.preventDefault();
+            showLoginModal('需要超级管理员权限才能操作管理员和考评员账户');
+            return false;
+          }
+          
+          // 对于考生账户，如果是敏感操作且不是超级管理员，也需要权限
+          if (role.includes('考生') && (buttonText === '禁用' || buttonText === '删除') && !isSuperAdmin) {
+            // 普通用户可以编辑考生信息，但不能禁用或删除
+            if (currentUserRole !== 'admin') {
+              e.preventDefault();
+              showLoginModal('需要管理员权限才能禁用或删除考生账户');
+              return false;
+            }
+          }
+        });
+      });
+      
+      // 更新用户信息显示
+      updateUserInfoDisplay();
+      
+      // 根据权限隐藏或显示某些功能按钮
+      if (!isSuperAdmin) {
+        // 隐藏只有超级管理员才能看到的功能按钮
+        document.querySelectorAll('.admin-only-feature').forEach(el => {
+          el.style.display = 'none';
+        });
+      }
+    }
+    
+    // 更新用户信息显示
+    function updateUserInfoDisplay() {
+      const userNameElement = document.querySelector('.user-name');
+      const userAvatarElement = document.querySelector('.user-avatar');
+      
+      if (isSuperAdmin) {
+        if (userNameElement) userNameElement.textContent = '超级管理员';
+        if (userAvatarElement) userAvatarElement.textContent = 'S';
+      } else {
+        if (userNameElement) userNameElement.textContent = '普通用户';
+        if (userAvatarElement) userAvatarElement.textContent = 'U';
+      }
+    }
+
+    // 显示登录模态框
+    function showLoginModal(message) {
+      // 创建模态框元素
+      const modal = document.createElement('div');
+      modal.className = 'login-modal';
+      modal.innerHTML = `
+        <div class="login-modal-content">
+          <div class="login-modal-header">
+            <h3>超级管理员登录</h3>
+            <span class="close-modal">&times;</span>
+          </div>
+          <div class="login-modal-body">
+            <p class="login-message">${message}</p>
+            <div class="form-group">
+              <label for="admin-username">用户名</label>
+              <input type="text" id="admin-username" placeholder="请输入超级管理员用户名" value="admin">
+            </div>
+            <div class="form-group">
+              <label for="admin-password">密码</label>
+              <input type="password" id="admin-password" placeholder="请输入密码">
+            </div>
+            <div class="login-error" style="display:none; color:red; margin-bottom:10px;"></div>
+            <div class="login-hint" style="color:#909399; font-size:12px; margin-bottom:10px;">
+              提示：超级管理员账号为 admin，密码为 123456
+            </div>
+            <button class="btn btn-primary admin-login-btn">登录</button>
+          </div>
+        </div>
+      `;
+      
+      // 添加模态框样式
+      const style = document.createElement('style');
+      style.textContent = `
+        .login-modal {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.5);
+        }
+        .login-modal-content {
+          background-color: white;
+          margin: 15% auto;
+          padding: 20px;
+          border-radius: 5px;
+          width: 400px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .login-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #eee;
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+        }
+        .close-modal {
+          font-size: 24px;
+          cursor: pointer;
+        }
+        .login-message {
+          margin-bottom: 15px;
+          color: #606266;
+        }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(modal);
+      
+      // 关闭模态框
+      const closeBtn = modal.querySelector('.close-modal');
+      closeBtn.addEventListener('click', function() {
+        document.body.removeChild(modal);
+      });
+      
+      // 登录按钮点击事件
+      const loginBtn = modal.querySelector('.admin-login-btn');
+      const errorDiv = modal.querySelector('.login-error');
+      loginBtn.addEventListener('click', function() {
+        const username = document.getElementById('admin-username').value;
+        const password = document.getElementById('admin-password').value;
+        
+        // 验证超级管理员账号
+        if (username === 'admin' && password === '123456') {
+          // 登录成功，设置超级管理员权限
+          const loginData = {
+            role: 'admin',
+            username: 'admin',
+            name: '超级管理员',
+            timestamp: new Date().toISOString(),
+            debug: true
+          };
+          localStorage.setItem('debug_login_info', JSON.stringify(loginData));
+          isSuperAdmin = true;
+          document.body.removeChild(modal);
+          
+          // 更新用户信息显示
+          updateUserInfoDisplay();
+          
+          // 提示登录成功
+          showNotification('超级管理员登录成功', 'success');
+        } else {
+          // 登录失败
+          errorDiv.textContent = '用户名或密码错误，请使用超级管理员账号';
+          errorDiv.style.display = 'block';
+        }
+      });
+    }
+    
+    // 显示通知
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+      
+      // 添加通知样式
+      const style = document.createElement('style');
+      style.textContent = `
+        .notification {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 12px 20px;
+          border-radius: 4px;
+          color: white;
+          z-index: 1000;
+          box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+          animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+          animation-fill-mode: forwards;
+          font-weight: 500;
+          min-width: 240px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-20px); }
+        }
+        .notification.success {
+          background-color: #67C23A;
+          border-left: 4px solid #529b2e;
+        }
+        .notification.error {
+          background-color: #F56C6C;
+          border-left: 4px solid #c03639;
+        }
+        .notification.info {
+          background-color: #909399;
+          border-left: 4px solid #6b6d71;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-20px); }
+        }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(notification);
+      
+      // 3秒后自动移除通知
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 3000);
+    }
+
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        // 切换标签页后重新过滤用户列表
+        setTimeout(filterUserList, 100);
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach((item, index) => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        
+        // 获取菜单项标题
+        const menuTitle = this.querySelector('.menu-title').textContent.trim();
+        
+        // 根据菜单项执行相应功能
+        switch(menuTitle) {
+          case '用户列表':
+            // 当前页面，不做操作
+            break;
+          case '角色权限':
+            showFeatureNotAvailableModal('角色权限管理');
+            break;
+          case '考生管理':
+            // 自动点击考生标签页
+            const studentTab = document.querySelector('.tab:nth-child(4)');
+            if (studentTab) studentTab.click();
+            break;
+          case '考评员管理':
+            // 自动点击考评员标签页
+            const teacherTab = document.querySelector('.tab:nth-child(3)');
+            if (teacherTab) teacherTab.click();
+            break;
+          case '用户统计':
+            showFeatureNotAvailableModal('用户统计');
+            break;
+          default:
+            showNotification(`${menuTitle}功能即将上线，敬请期待！`, 'info');
+        }
+      });
+    });
+    
+    // 显示功能未上线模态框
+    function showFeatureNotAvailableModal(featureName) {
+      // 创建模态框元素
+      const modal = document.createElement('div');
+      modal.className = 'feature-modal';
+      modal.innerHTML = `
+        <div class="feature-modal-content">
+          <div class="feature-modal-header">
+            <h3>${featureName}功能</h3>
+            <span class="close-modal">&times;</span>
+          </div>
+          <div class="feature-modal-body">
+            <div class="feature-icon">🚧</div>
+            <p class="feature-message">该功能正在开发中，即将上线！</p>
+            <p class="feature-submessage">我们正在努力完善${featureName}功能，敬请期待。</p>
+          </div>
+          <div class="feature-modal-footer">
+            <button class="btn btn-primary close-feature-modal">我知道了</button>
+          </div>
+        </div>
+      `;
+      
+      // 添加模态框样式
+      const style = document.createElement('style');
+      style.textContent = `
+        .feature-modal {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.5);
+        }
+        .feature-modal-content {
+          background-color: white;
+          margin: 15% auto;
+          padding: 20px;
+          border-radius: 5px;
+          width: 400px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+          text-align: center;
+        }
+        .feature-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #eee;
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+        }
+        .feature-icon {
+          font-size: 48px;
+          margin-bottom: 20px;
+        }
+        .feature-message {
+          font-size: 18px;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .feature-submessage {
+          color: #606266;
+          margin-bottom: 20px;
+        }
+        .feature-modal-footer {
+          margin-top: 20px;
+        }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(modal);
+      
+      // 关闭模态框
+      const closeBtn = modal.querySelector('.close-modal');
+      const closeModalBtn = modal.querySelector('.close-feature-modal');
+      
+      const closeModal = () => {
+        document.body.removeChild(modal);
+      };
+      
+      closeBtn.addEventListener('click', closeModal);
+      closeModalBtn.addEventListener('click', closeModal);
+    }
+    
+    // 搜索按钮点击事件
+    const searchBtn = document.querySelector('.search-btn');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function() {
+        // 模拟搜索操作
+        const searchInput = document.querySelector('.search-input');
+        const searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        
+        // 搜索完成后过滤超级用户
+        setTimeout(filterUserList, 100);
+        
+        // 显示搜索提示
+        if (searchText) {
+          showNotification(`搜索关键词: ${searchText}`, 'info');
+        }
+      });
+    }
+    
+    // 渲染用户表格
+    function renderUserTable() {
+      const tableBody = document.getElementById('user-table-body');
+      tableBody.innerHTML = '';
+      
+      // 应用排序
+      const sortedData = [...filteredData].sort((a, b) => {
+        if (sortDirection === 'asc') {
+          return a[sortField] > b[sortField] ? 1 : -1;
+        } else {
+          return a[sortField] < b[sortField] ? 1 : -1;
+        }
+      });
+      
+      // 应用分页
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedData = sortedData.slice(startIndex, endIndex);
+      
+      // 渲染表格行
+      paginatedData.forEach(user => {
+        if (user.username === 'admin' && !isSuperAdmin) {
+          return; // 隐藏admin超级用户
+        }
+        
+        const row = document.createElement('tr');
+        row.setAttribute('data-id', user.idCard);
+        
+        // 添加复选框
+        const checkboxCell = document.createElement('td');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'row-checkbox';
+        checkbox.checked = selectedRows.has(user.idCard);
+        checkbox.addEventListener('change', function() {
+          if (this.checked) {
+            selectedRows.add(user.idCard);
+          } else {
+            selectedRows.delete(user.idCard);
+          }
+          updateSelectedCount();
+          updateBatchActionsVisibility();
+        });
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+        
+        // 添加身份证号码单元格
+        const idCardCell = document.createElement('td');
+        idCardCell.textContent = user.idCard;
+        row.appendChild(idCardCell);
+        
+        // 添加用户名单元格
+        const usernameCell = document.createElement('td');
+        usernameCell.textContent = user.username;
+        row.appendChild(usernameCell);
+        
+        // 添加姓名单元格
+        const nameCell = document.createElement('td');
+        nameCell.textContent = user.name;
+        row.appendChild(nameCell);
+        
+        // 添加角色单元格
+        const roleCell = document.createElement('td');
+        const roleBadge = document.createElement('span');
+        roleBadge.className = 'badge';
+        if (user.role === '管理员') {
+          roleBadge.classList.add('badge-primary');
+        } else if (user.role === '考评员') {
+          roleBadge.classList.add('badge-warning');
+        } else {
+          roleBadge.classList.add('badge-success');
+        }
+        roleBadge.textContent = user.role;
+        roleCell.appendChild(roleBadge);
+        row.appendChild(roleCell);
+        
+        // 添加状态单元格
+        const statusCell = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.className = 'badge';
+        if (user.status === '正常') {
+          statusBadge.classList.add('badge-success');
+        } else {
+          statusBadge.classList.add('badge-danger');
+        }
+        statusBadge.textContent = user.status;
+        statusCell.appendChild(statusBadge);
+        row.appendChild(statusCell);
+        
+        // 添加联系方式单元格
+        const contactCell = document.createElement('td');
+        contactCell.textContent = user.contact || '-';
+        row.appendChild(contactCell);
+        
+        // 添加邮箱单元格
+        const emailCell = document.createElement('td');
+        emailCell.textContent = user.email || '-';
+        row.appendChild(emailCell);
+        
+        // 添加部门单元格
+        const departmentCell = document.createElement('td');
+        departmentCell.textContent = user.department || '-';
+        row.appendChild(departmentCell);
+        
+        // 添加职位单元格
+        const positionCell = document.createElement('td');
+        positionCell.textContent = user.position || '-';
+        row.appendChild(positionCell);
+        
+        // 添加创建时间单元格
+        const createTimeCell = document.createElement('td');
+        createTimeCell.textContent = user.createTime;
+        row.appendChild(createTimeCell);
+        
+        // 添加操作单元格
+        const actionCell = document.createElement('td');
+        const actionBtns = document.createElement('div');
+        actionBtns.className = 'action-btns';
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-secondary';
+        editBtn.textContent = '编辑';
+        editBtn.addEventListener('click', function() {
+          showEditUserModal(user);
+        });
+        actionBtns.appendChild(editBtn);
+        
+        if (user.status === '正常') {
+          const disableBtn = document.createElement('button');
+          disableBtn.className = 'btn btn-danger';
+          disableBtn.textContent = '禁用';
+          disableBtn.addEventListener('click', function() {
+            if (confirm('确定要禁用用户 ' + user.username + ' 吗？')) {
+              user.status = '禁用';
+              renderUserTable();
+              showNotification('用户 ' + user.username + ' 已禁用', 'warning');
+            }
+          });
+          actionBtns.appendChild(disableBtn);
+        } else {
+          const enableBtn = document.createElement('button');
+          enableBtn.className = 'btn btn-primary';
+          enableBtn.textContent = '启用';
+          enableBtn.addEventListener('click', function() {
+            if (confirm('确定要启用用户 ' + user.username + ' 吗？')) {
+              user.status = '正常';
+              renderUserTable();
+              showNotification('用户 ' + user.username + ' 已启用', 'success');
+            }
+          });
+          actionBtns.appendChild(enableBtn);
+        }
+        
+        actionCell.appendChild(actionBtns);
+        row.appendChild(actionCell);
+        
+        tableBody.appendChild(row);
+      });
+      
+      // 更新分页信息
+      updatePagination();
+    }
+    
+    // 更新分页控件
+    function updatePagination() {
+      // 更新总页数
+      totalPages = Math.ceil(filteredData.length / pageSize);
+      if (currentPage > totalPages && totalPages > 0) {
+        currentPage = totalPages;
+      }
+      
+      // 更新页码按钮
+      const pageNumbers = document.getElementById('page-numbers');
+      pageNumbers.innerHTML = '';
+      
+      // 确定显示的页码范围
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, startPage + 4);
+      if (endPage - startPage < 4 && totalPages > 4) {
+        startPage = Math.max(1, endPage - 4);
+      }
+      
+      // 创建页码按钮
+      for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('div');
+        pageBtn.className = 'page-btn';
+        if (i === currentPage) {
+          pageBtn.classList.add('active');
+        }
+        pageBtn.textContent = i;
+        pageBtn.addEventListener('click', function() {
+          currentPage = i;
+          renderUserTable();
+        });
+        pageNumbers.appendChild(pageBtn);
+      }
+      
+      // 更新页码信息
+      document.getElementById('current-page').textContent = `第 ${currentPage} 页`;
+      document.getElementById('total-pages').textContent = `共 ${totalPages} 页`;
+      document.getElementById('total-records').textContent = filteredData.length;
+    }
+    
+    // 搜索用户
+    function searchUsers() {
+      const searchInput = document.querySelector('.search-input').value.toLowerCase();
+      const searchFilter = document.querySelector('.search-filter').value;
+      
+      if (searchInput.trim() === '') {
+        filteredData = [...userData];
+      } else {
+        filteredData = userData.filter(user => {
+          if (searchFilter === 'all') {
+            return (
+              user.username.toLowerCase().includes(searchInput) ||
+              user.name.toLowerCase().includes(searchInput) ||
+              user.role.toLowerCase().includes(searchInput) ||
+              user.status.toLowerCase().includes(searchInput)
+            );
+          } else {
+            return user[searchFilter].toLowerCase().includes(searchInput);
+          }
+        });
+      }
+      
+      // 重置分页到第一页
+      currentPage = 1;
+      selectedRows.clear();
+      updateSelectedCount();
+      updateBatchActionsVisibility();
+      renderUserTable();
+    }
+    
+    // 更新选中行数量显示
+    function updateSelectedCount() {
+      const selectedCount = document.querySelector('.selected-count');
+      selectedCount.textContent = `已选择 ${selectedRows.size} 项`;
+    }
+    
+    // 更新批量操作按钮可见性
+    function updateBatchActionsVisibility() {
+      const batchActions = document.querySelector('.batch-actions');
+      if (selectedRows.size > 0) {
+        batchActions.style.display = 'flex';
+        batchActions.classList.add('active');
+      } else {
+        batchActions.style.display = 'none';
+        batchActions.classList.remove('active');
+      }
+    }
+    
+    // 过滤用户列表，根据当前标签页和权限过滤
+    function filterUserList() {
+      // 获取当前激活的标签页
+      const activeTab = document.querySelector('.tab.active');
+      const activeTabText = activeTab ? activeTab.textContent.trim() : '全部用户';
+      
+      filteredData = userData.filter(user => {
+        // 超级用户只对超级管理员可见
+        if (user.username === 'admin' && !isSuperAdmin) {
+          return false;
+        }
+        
+        // 根据标签页过滤
+        switch(activeTabText) {
+          case '全部用户':
+            return true; // 显示所有用户
+          case '管理员':
+            return user.role.includes('管理员');
+          case '考评员':
+            return user.role.includes('考评员');
+          case '考生':
+            return user.role.includes('考生');
+          default:
+            return true;
+        }
+      });
+      
+      // 重置分页到第一页
+      currentPage = 1;
+      // 清空选中行
+      selectedRows.clear();
+      updateSelectedCount();
+      updateBatchActionsVisibility();
+      
+      renderUserTable();
+    }
+    
+    // 页面加载时检查用户权限并过滤用户列表
+    // 设置批量操作按钮
+    function setupBatchActions() {
+      // 批量删除
+      document.querySelector('.batch-delete-btn').addEventListener('click', function() {
+        // 检查是否有管理员或考评员账户被选中
+        let hasAdminOrTeacher = false;
+        let hasStudent = false;
+        
+        // 检查选中的用户类型
+        selectedRows.forEach(userId => {
+          const user = userData.find(u => u.id === userId);
+          if (user) {
+            if (user.role.includes('管理员') || user.role.includes('考评员')) {
+              hasAdminOrTeacher = true;
+            }
+            if (user.role.includes('考生')) {
+              hasStudent = true;
+            }
+          }
+        });
+        
+        // 权限检查
+        if (hasAdminOrTeacher && !isSuperAdmin) {
+          showLoginModal('需要超级管理员权限才能批量删除管理员和考评员账户');
+          return;
+        }
+        
+        // 对于考生账户，如果不是超级管理员或管理员，也需要权限
+        if (hasStudent && !isSuperAdmin && currentUserRole !== 'admin') {
+          showLoginModal('需要管理员权限才能批量删除考生账户');
+          return;
+        }
+        
+        if (confirm(`确定要删除选中的 ${selectedRows.size} 个用户吗？`)) {
+          userData = userData.filter(user => !selectedRows.has(user.id));
+          filteredData = filteredData.filter(user => !selectedRows.has(user.id));
+          selectedRows.clear();
+          updateSelectedCount();
+          updateBatchActionsVisibility();
+          renderUserTable();
+          showNotification('批量删除成功', 'success');
+        }
+      });
+      
+      // 批量禁用
+      document.querySelector('.batch-disable-btn').addEventListener('click', function() {
+        // 检查是否有管理员或考评员账户被选中
+        let hasAdminOrTeacher = false;
+        let hasStudent = false;
+        
+        // 检查选中的用户类型
+        selectedRows.forEach(userId => {
+          const user = userData.find(u => u.id === userId);
+          if (user) {
+            if (user.role.includes('管理员') || user.role.includes('考评员')) {
+              hasAdminOrTeacher = true;
+            }
+            if (user.role.includes('考生')) {
+              hasStudent = true;
+            }
+          }
+        });
+        
+        // 权限检查
+        if (hasAdminOrTeacher && !isSuperAdmin) {
+          showLoginModal('需要超级管理员权限才能批量禁用管理员和考评员账户');
+          return;
+        }
+        
+        // 对于考生账户，如果不是超级管理员或管理员，也需要权限
+        if (hasStudent && !isSuperAdmin && currentUserRole !== 'admin') {
+          showLoginModal('需要管理员权限才能批量禁用考生账户');
+          return;
+        }
+        
+        if (confirm(`确定要禁用选中的 ${selectedRows.size} 个用户吗？`)) {
+          userData.forEach(user => {
+            if (selectedRows.has(user.idCard)) {
+              user.status = '禁用';
+            }
+          });
+          selectedRows.clear();
+          updateSelectedCount();
+          updateBatchActionsVisibility();
+          renderUserTable();
+          showNotification('批量禁用成功', 'success');
+        }
+      });
+      
+      // 批量启用
+      document.querySelector('.batch-enable-btn').addEventListener('click', function() {
+        // 检查是否有管理员或考评员账户被选中
+        let hasAdminOrTeacher = false;
+        
+        // 检查选中的用户类型
+        selectedRows.forEach(userIdCard => {
+          const user = userData.find(u => u.idCard === userIdCard);
+          if (user && (user.role.includes('管理员') || user.role.includes('考评员'))) {
+            hasAdminOrTeacher = true;
+          }
+        });
+        
+        // 权限检查
+        if (hasAdminOrTeacher && !isSuperAdmin) {
+          showLoginModal('需要超级管理员权限才能批量启用管理员和考评员账户');
+          return;
+        }
+        
+        if (confirm(`确定要启用选中的 ${selectedRows.size} 个用户吗？`)) {
+          userData.forEach(user => {
+            if (selectedRows.has(user.idCard)) {
+              user.status = '正常';
+            }
+          });
+          selectedRows.clear();
+          updateSelectedCount();
+          updateBatchActionsVisibility();
+          renderUserTable();
+          showNotification('批量启用成功', 'success');
+        }
+      });
+    }
+      
+      // 设置分页控件事件
+      function setupPagination() {
+        // 首页按钮
+        document.getElementById('first-page-btn').addEventListener('click', function() {
+          if (currentPage !== 1) {
+            currentPage = 1;
+            renderUserTable();
+          }
+        });
+        
+        // 上一页按钮
+        document.getElementById('prev-page-btn').addEventListener('click', function() {
+          if (currentPage > 1) {
+            currentPage--;
+            renderUserTable();
+          }
+        });
+        
+        // 下一页按钮
+        document.getElementById('next-page-btn').addEventListener('click', function() {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderUserTable();
+          }
+        });
+        
+        // 末页按钮
+        document.getElementById('last-page-btn').addEventListener('click', function() {
+          if (currentPage !== totalPages) {
+            currentPage = totalPages;
+            renderUserTable();
+          }
+        });
+        
+        // 每页显示数量选择
+        document.getElementById('page-size-select').addEventListener('change', function() {
+          pageSize = parseInt(this.value);
+          currentPage = 1;
+          renderUserTable();
+        });
+      }
+      
+      // 显示通知消息
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // 显示通知
+        setTimeout(() => {
+          notification.classList.add('show');
+        }, 10);
+        
+        // 自动移除通知
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => {
+            notification.remove();
+          }, 300);
+        }, 3000);
+      }
+
+      // 显示通知提示
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        // 添加样式
+        const style = document.createElement('style');
+        style.textContent = `
+          .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+          }
+          .notification.info {
+            background-color: #1890ff;
+          }
+          .notification.success {
+            background-color: #52c41a;
+          }
+          .notification.warning {
+            background-color: #faad14;
+          }
+          .notification.error {
+            background-color: #f5222d;
+          }
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+        `;
+        
+        document.head.appendChild(style);
+        document.body.appendChild(notification);
+        
+        // 3秒后移除通知
+        setTimeout(() => {
+          document.body.removeChild(notification);
+          document.head.removeChild(style);
+        }, 3000);
+      }
+      
+      // 显示编辑用户模态框
+      function showEditUserModal(user) {
+        // 创建模态框元素
+        const modal = document.createElement('div');
+        modal.className = 'edit-user-modal';
+        
+        modal.innerHTML = `
+          <div class="edit-user-modal-content">
+            <div class="edit-user-modal-header">
+              <h3>编辑用户</h3>
+              <span class="close-modal">&times;</span>
+            </div>
+            <div class="edit-user-modal-body">
+              <div class="form-group">
+                <label for="edit-idcard">身份证号码</label>
+                <input type="text" id="edit-idcard" placeholder="请输入身份证号码" value="${user.idCard}" required readonly>
+              </div>
+              <div class="form-group">
+                <label for="edit-username">用户名</label>
+                <input type="text" id="edit-username" placeholder="请输入用户名" value="${user.username}" required>
+              </div>
+              <div class="form-group">
+                <label for="edit-name">姓名</label>
+                <input type="text" id="edit-name" placeholder="请输入姓名" value="${user.name}" required>
+              </div>
+              <div class="form-group">
+                <label for="edit-password">密码</label>
+                <input type="password" id="edit-password" placeholder="留空表示不修改密码">
+              </div>
+              <div class="form-group">
+                <label for="edit-role">角色</label>
+                <select id="edit-role">
+                  <option value="考生" ${user.role === '考生' ? 'selected' : ''}>考生</option>
+                  <option value="考评员" ${user.role === '考评员' ? 'selected' : ''}>考评员</option>
+                  <option value="管理员" ${user.role === '管理员' ? 'selected' : ''}>管理员</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-status">状态</label>
+                <select id="edit-status">
+                  <option value="正常" ${user.status === '正常' ? 'selected' : ''}>正常</option>
+                  <option value="禁用" ${user.status === '禁用' ? 'selected' : ''}>禁用</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-contact">联系方式</label>
+                <input type="text" id="edit-contact" placeholder="请输入联系方式" value="${user.contact || ''}">
+              </div>
+              <div class="form-group">
+                <label for="edit-email">邮箱</label>
+                <input type="email" id="edit-email" placeholder="请输入邮箱" value="${user.email || ''}">
+              </div>
+              <div class="form-group">
+                <label for="edit-department">部门</label>
+                <input type="text" id="edit-department" placeholder="请输入部门" value="${user.department || ''}">
+              </div>
+              <div class="form-group">
+                <label for="edit-position">职位</label>
+                <input type="text" id="edit-position" placeholder="请输入职位" value="${user.position || ''}">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-secondary cancel-edit">取消</button>
+              <button class="btn btn-primary confirm-edit">确认修改</button>
+            </div>
+          </div>
+        `;
+        
+        // 添加模态框样式
+        const style = document.createElement('style');
+        style.textContent = `
+          .edit-user-modal {
+            display: block;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+          }
+          .edit-user-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+          }
+          .edit-user-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+          }
+          .edit-user-modal-header h3 {
+            margin: 0;
+            color: #333;
+          }
+          .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+          }
+          .close-modal:hover {
+            color: #333;
+          }
+          .form-group {
+            margin-bottom: 15px;
+          }
+          .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+          }
+          .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            box-sizing: border-box;
+          }
+          .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+          }
+        `;
+        
+        document.head.appendChild(style);
+        document.body.appendChild(modal);
+        
+        // 关闭模态框
+        const closeBtn = modal.querySelector('.close-modal');
+        const cancelBtn = modal.querySelector('.cancel-edit');
+        
+        const closeModal = () => {
+          document.body.removeChild(modal);
+          document.head.removeChild(style);
+        };
+        
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        
+        // 确认修改按钮点击事件
+        const confirmBtn = modal.querySelector('.confirm-edit');
+        confirmBtn.addEventListener('click', function() {
+          // 获取表单数据
+          const username = document.getElementById('edit-username').value.trim();
+          const name = document.getElementById('edit-name').value.trim();
+          const password = document.getElementById('edit-password').value.trim();
+          const role = document.getElementById('edit-role').value;
+          const status = document.getElementById('edit-status').value;
+          const contact = document.getElementById('edit-contact').value.trim();
+          const email = document.getElementById('edit-email').value.trim();
+          const department = document.getElementById('edit-department').value.trim();
+          const position = document.getElementById('edit-position').value.trim();
+          
+          // 表单验证
+          if (!username || !name) {
+            alert('用户名和姓名为必填项！');
+            return;
+          }
+          
+          // 检查用户名是否已存在（排除当前用户）
+          const existingUser = userData.find(u => u.username === username && u.idCard !== user.idCard);
+          if (existingUser) {
+            alert('用户名已存在！');
+            return;
+          }
+          
+          // 更新用户数据
+          user.username = username;
+          user.name = name;
+          if (password) {
+            // 实际应用中应该进行密码加密
+            user.password = password;
+          }
+          user.role = role;
+          user.status = status;
+          user.contact = contact;
+          user.email = email;
+          user.department = department;
+          user.position = position;
+          
+          // 关闭模态框
+          closeModal();
+          
+          // 刷新用户表格
+          renderUserTable();
+          
+          // 显示成功提示
+          showNotification('用户信息修改成功', 'success');
+        });
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        checkUserAuth();
+        
+        // 设置侧边栏切换功能
+        const toggleSidebar = document.querySelector('.toggle-sidebar');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        
+        toggleSidebar.addEventListener('click', function() {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+        });
+        
+        // 设置侧边栏菜单项点击事件
+        document.querySelectorAll('.menu-item').forEach(item => {
+          item.addEventListener('click', function() {
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 获取菜单项标题
+            const menuTitle = this.querySelector('.menu-title').textContent;
+            
+            // 根据菜单项标题执行相应操作
+            if (menuTitle === '用户列表') {
+              // 当前页面，不做跳转
+            } else {
+              showNotification(`${menuTitle}功能即将上线，敬请期待！`, 'info');
+            }
+          });
+        });
+        
+        // 设置表格排序
+        document.querySelectorAll('thead th').forEach((header, index) => {
+          if (index > 0 && index < 8) { // 跳过复选框和操作列
+            header.addEventListener('click', function() {
+              // 更新排序字段和方向
+              const fields = ['idCard', 'username', 'name', 'role', 'status', 'contact', 'createTime'];
+              const field = fields[index-1];
+              if (sortField === field) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+              } else {
+                sortField = field;
+                sortDirection = 'asc';
+              }
+              
+              // 更新排序图标
+              document.querySelectorAll('.sort-icon').forEach((icon, i) => {
+                if (i === index - 1) {
+                  icon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+                } else {
+                  icon.textContent = '↕';
+                }
+              });
+              
+              renderUserTable();
+            });
+          }
+        });
+        
+        // 设置全选/取消全选
+        document.getElementById('select-all-checkbox').addEventListener('change', function() {
+          const checkboxes = document.querySelectorAll('.row-checkbox');
+          checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+            const row = checkbox.closest('tr');
+            const userIdCard = row.getAttribute('data-id');
+            if (this.checked) {
+              selectedRows.add(userIdCard);
+            } else {
+              selectedRows.delete(userIdCard);
+            }
+          });
+          updateSelectedCount();
+          updateBatchActionsVisibility();
+        });
+        
+        // 设置搜索功能
+        document.querySelector('.search-btn').addEventListener('click', searchUsers);
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchUsers();
+          }
+        });
+        
+        // 设置批量操作
+        setupBatchActions();
+        
+        // 设置分页控件
+        setupPagination();
+        
+        filterUserList();
+        setupExcelImport();
+      });
+    
+    // 设置Excel导入功能
+    function setupExcelImport() {
+      // 创建隐藏的文件输入元素
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.xlsx, .xls';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      
+      // 为Excel导入按钮添加点击事件
+      const importBtn = document.querySelector('.btn-success');
+      if (importBtn) {
+        importBtn.addEventListener('click', function() {
+          // 检查权限
+          if (!isSuperAdmin) {
+            showLoginModal('需要超级管理员权限才能导入用户数据');
+            return;
+          }
+          
+          // 触发文件选择
+          fileInput.click();
+        });
+      }
+      
+      // 文件选择后的处理
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // 显示加载中提示
+        showNotification('正在解析Excel文件...', 'info');
+        
+        // 创建模拟解析延迟
+        setTimeout(() => {
+          // 模拟解析成功
+          showImportPreviewModal(file.name);
+          
+          // 重置文件输入，允许选择相同文件
+          fileInput.value = '';
+        }, 1000);
+      });
+    }
+    
+    // 显示导入预览模态框
+    function showImportPreviewModal(fileName) {
+      // 创建模态框元素
+      const modal = document.createElement('div');
+      modal.className = 'import-modal';
+      modal.innerHTML = `
+        <div class="import-modal-content">
+          <div class="import-modal-header">
+            <h3>Excel导入预览</h3>
+            <span class="close-modal">&times;</span>
+          </div>
+          <div class="import-modal-body">
+            <p>已成功解析文件: <strong>${fileName}</strong></p>
+            <div class="import-preview">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>用户名</th>
+                    <th>姓名</th>
+                    <th>角色</th>
+                    <th>状态</th>
+                    <th>联系方式</th>
+                    <th>邮箱</th>
+                    <th>部门</th>
+                    <th>职位</th>
+                    <th>验证结果</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>teacher2</td>
+                    <td>王考评员</td>
+                    <td>考评员</td>
+                    <td>正常</td>
+                    <td>13800138099</td>
+                    <td>teacher2@example.com</td>
+                    <td>教学部</td>
+                    <td>高级考评员</td>
+                    <td><span class="badge badge-success">有效</span></td>
+                  </tr>
+                  <tr>
+                    <td>student5</td>
+                    <td>赵同学</td>
+                    <td>考生</td>
+                    <td>正常</td>
+                    <td>13900139001</td>
+                    <td>student5@example.com</td>
+                    <td>学生部</td>
+                    <td>学生</td>
+                    <td><span class="badge badge-success">有效</span></td>
+                  </tr>
+                  <tr>
+                    <td>admin2</td>
+                    <td>李管理</td>
+                    <td>管理员</td>
+                    <td>正常</td>
+                    <td>13700137001</td>
+                    <td>admin2@example.com</td>
+                    <td>管理部</td>
+                    <td>系统管理员</td>
+                    <td><span class="badge badge-warning">需要权限</span></td>
+                  </tr>
+                  <tr>
+                    <td>student123</td>
+                    <td></td>
+                    <td>考生</td>
+                    <td>正常</td>
+                    <td>13600136001</td>
+                    <td>student123@example.com</td>
+                    <td>学生部</td>
+                    <td>学生</td>
+                    <td><span class="badge badge-danger">姓名缺失</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="import-summary">
+              <p>共发现 4 条记录，其中 2 条有效，1 条需要权限，1 条数据无效</p>
+            </div>
+            <div class="import-options">
+              <label>
+                <input type="checkbox" id="skip-invalid"> 跳过无效数据
+              </label>
+              <label>
+                <input type="checkbox" id="override-existing"> 覆盖已存在的用户
+              </label>
+            </div>
+            <div class="import-actions">
+              <button class="btn btn-secondary cancel-import">取消</button>
+              <button class="btn btn-primary confirm-import">确认导入</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // 添加模态框样式
+      const style = document.createElement('style');
+      style.textContent = `
+        .import-modal {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.5);
+        }
+        .import-modal-content {
+          background-color: white;
+          margin: 5% auto;
+          padding: 20px;
+          border-radius: 5px;
+          width: 80%;
+          max-width: 800px;
+          max-height: 80vh;
+          overflow-y: auto;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .import-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #eee;
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+        }
+        .close-modal {
+          font-size: 24px;
+          cursor: pointer;
+        }
+        .import-preview {
+          max-height: 300px;
+          overflow-y: auto;
+          margin-bottom: 15px;
+        }
+        .import-options {
+          margin: 15px 0;
+        }
+        .import-options label {
+          margin-right: 15px;
+          display: inline-flex;
+          align-items: center;
+        }
+        .import-options input {
+          margin-right: 5px;
+        }
+        .import-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          margin-top: 15px;
+        }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(modal);
+      
+      // 关闭模态框
+      const closeBtn = modal.querySelector('.close-modal');
+      const cancelBtn = modal.querySelector('.cancel-import');
+      
+      const closeModal = () => {
+        document.body.removeChild(modal);
+      };
+      
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      
+      // 确认导入按钮点击事件
+      const confirmBtn = modal.querySelector('.confirm-import');
+      confirmBtn.addEventListener('click', function() {
+        // 获取选项
+        const skipInvalid = document.getElementById('skip-invalid').checked;
+        const overrideExisting = document.getElementById('override-existing').checked;
+        
+        // 关闭模态框
+        closeModal();
+        
+        // 显示导入中提示
+        showNotification('正在导入用户数据...', 'info');
+        
+        // 模拟导入延迟
+        setTimeout(() => {
+          // 模拟导入成功
+          showNotification('成功导入 3 个用户', 'success');
+          
+          // 刷新用户列表（这里只是模拟）
+          const tableBody = document.querySelector('.table tbody');
+          if (tableBody) {
+            // 添加新导入的用户到表格
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+              <td>1005</td>
+              <td>teacher2</td>
+              <td>王考评员</td>
+              <td><span class="badge badge-warning">考评员</span></td>
+              <td><span class="badge badge-success">正常</span></td>
+              <td>13800138099</td>
+              <td>teacher2@example.com</td>
+              <td>教学部</td>
+              <td>高级考评员</td>
+              <td>${new Date().toLocaleString()}</td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-danger">禁用</button>
+                </div>
+              </td>
+            `;
+            tableBody.appendChild(newRow);
+            
+            // 过滤用户列表，确保超级用户不显示
+            filterUserList();
+          }
+        }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>

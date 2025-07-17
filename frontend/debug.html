@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 调试主页</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #409EFF;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .module {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+    .module:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2);
+    }
+    .module h2 {
+      color: #409EFF;
+      margin-top: 0;
+      border-bottom: 1px solid #EBEEF5;
+      padding-bottom: 10px;
+    }
+    .module-content {
+      margin-top: 15px;
+    }
+    .module-content ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+    .module-content li {
+      margin-bottom: 8px;
+    }
+    .module-content a {
+      color: #606266;
+      text-decoration: none;
+      display: block;
+      padding: 5px;
+      border-radius: 3px;
+      transition: all 0.2s;
+    }
+    .module-content a:hover {
+      background-color: #ecf5ff;
+      color: #409EFF;
+    }
+    .api-base {
+      background-color: #f0f9eb;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-family: monospace;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #909399;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>职业技能等级认证考试系统 - 调试主页</h1>
+    </header>
+
+    <div class="api-base">
+      <strong>API基础路径:</strong> http://localhost:8000/api/
+    </div>
+
+    <div class="modules">
+      <!-- 用户管理模块 -->
+      <div class="module">
+        <h2>用户管理模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/users/" target="_blank">用户列表</a></li>
+            <li><a href="/api/users/auth/login/" target="_blank">用户登录</a></li>
+            <li><a href="/api/users/auth/refresh/" target="_blank">刷新令牌</a></li>
+            <li><a href="/api/users/auth/logout/" target="_blank">用户登出</a></li>
+            <li><a href="/api/users/current/" target="_blank">当前用户信息</a></li>
+            <li><a href="/api/users/departments/" target="_blank">部门管理</a></li>
+            <li><a href="/api/users/classes/" target="_blank">班级管理</a></li>
+            <li><a href="/api/users/logs/" target="_blank">登录日志</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 题库管理模块 -->
+      <div class="module">
+        <h2>题库管理模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/questions/" target="_blank">试题列表</a></li>
+            <li><a href="/api/questions/categories/" target="_blank">试题分类</a></li>
+            <li><a href="/api/questions/knowledge-points/" target="_blank">知识点管理</a></li>
+            <li><a href="/api/questions/difficulty-levels/" target="_blank">难度级别</a></li>
+            <li><a href="/api/questions/import/" target="_blank">批量导入</a></li>
+            <li><a href="/api/questions/export/" target="_blank">批量导出</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 试卷管理模块 -->
+      <div class="module">
+        <h2>试卷管理模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/papers/" target="_blank">试卷列表</a></li>
+            <li><a href="/api/papers/templates/" target="_blank">试卷模板</a></li>
+            <li><a href="/api/papers/sections/" target="_blank">试卷章节</a></li>
+            <li><a href="/api/papers/rules/" target="_blank">组卷规则</a></li>
+            <li><a href="/api/papers/generate/" target="_blank">生成试卷</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 考试监控模块 -->
+      <div class="module">
+        <h2>考试监控模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/exams/" target="_blank">考试列表</a></li>
+            <li><a href="/api/exams/rooms/" target="_blank">考场管理</a></li>
+            <li><a href="/api/exams/monitoring/" target="_blank">实时监控</a></li>
+            <li><a href="/api/exams/screenshots/" target="_blank">考生截屏</a></li>
+            <li><a href="/api/exams/actions/" target="_blank">考试控制</a></li>
+            <li><a href="/api/exams/anomalies/" target="_blank">异常行为</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 成绩管理模块 -->
+      <div class="module">
+        <h2>成绩管理模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/scores/" target="_blank">成绩列表</a></li>
+            <li><a href="/api/scores/sheets/" target="_blank">答卷管理</a></li>
+            <li><a href="/api/scores/items/" target="_blank">题目得分</a></li>
+            <li><a href="/api/scores/statistics/" target="_blank">成绩统计</a></li>
+            <li><a href="/api/scores/export/" target="_blank">成绩导出</a></li>
+            <li><a href="/api/scores/appeals/" target="_blank">成绩申诉</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 阅卷中心模块 -->
+      <div class="module">
+        <h2>阅卷中心模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/marking/tasks/" target="_blank">阅卷任务</a></li>
+            <li><a href="/api/marking/objective/" target="_blank">客观题阅卷</a></li>
+            <li><a href="/api/marking/subjective/" target="_blank">主观题阅卷</a></li>
+            <li><a href="/api/marking/reviews/" target="_blank">复评管理</a></li>
+            <li><a href="/api/marking/standards/" target="_blank">评分标准</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 日志审计模块 -->
+      <div class="module">
+        <h2>日志审计模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/logs/operations/" target="_blank">操作日志</a></li>
+            <li><a href="/api/logs/system/" target="_blank">系统日志</a></li>
+            <li><a href="/api/logs/security/" target="_blank">安全日志</a></li>
+            <li><a href="/api/logs/export/" target="_blank">日志导出</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 数据分析模块 -->
+      <div class="module">
+        <h2>数据分析模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/analysis/departments/" target="_blank">院系分析</a></li>
+            <li><a href="/api/analysis/classes/" target="_blank">班级分析</a></li>
+            <li><a href="/api/analysis/knowledge-points/" target="_blank">知识点分析</a></li>
+            <li><a href="/api/analysis/question-types/" target="_blank">题型分析</a></li>
+            <li><a href="/api/analysis/trends/" target="_blank">趋势分析</a></li>
+            <li><a href="/api/analysis/comparisons/" target="_blank">对比分析</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- API网关模块 -->
+      <div class="module">
+        <h2>API网关模块</h2>
+        <div class="module-content">
+          <ul>
+            <li><a href="/api/gateway/status/" target="_blank">服务状态</a></li>
+            <li><a href="/api/gateway/metrics/" target="_blank">性能指标</a></li>
+            <li><a href="/api/gateway/routes/" target="_blank">路由管理</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>职业技能等级认证考试系统 &copy; 2023 - 调试版本</p>
+    </footer>
+  </div>
+
+  <script>
+    // 简单的错误处理
+    document.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const url = this.getAttribute('href');
+        // 在新窗口打开API调试页面
+        window.open(url, '_blank');
+      });
+    });
+  </script>
+</body>
+</html>

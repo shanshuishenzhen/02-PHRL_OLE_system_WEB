@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 试卷管理模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .paper-preview {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      border-left: 3px solid #1890ff;
+    }
+    .paper-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .paper-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .paper-meta {
+      font-size: 12px;
+      color: #606266;
+    }
+    .paper-stats {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .paper-stat {
+      display: flex;
+      align-items: center;
+    }
+    .paper-stat-icon {
+      margin-right: 5px;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+    }
+    .filter-label {
+      margin-right: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .filter-select {
+      padding: 6px 10px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">试卷管理模块</div>
+        <div class="sidebar-subtitle">Exam Paper Management</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">📄</span>
+          <span class="menu-title">试卷列表</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📝</span>
+          <span class="menu-title">创建试卷</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📋</span>
+          <span class="menu-title">试卷模板</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">🔄</span>
+          <span class="menu-title">试卷组卷</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">试卷统计</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">试卷管理</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">试卷列表</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div class="user-name">管理员</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">试卷列表</div>
+        <div class="card">
+          <div class="card-header">
+            <span>试卷管理</span>
+            <button class="btn btn-primary">
+              <span class="btn-icon">+</span> 创建试卷
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">类型：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="normal">普通试卷</option>
+                  <option value="template">试卷模板</option>
+                  <option value="auto">自动组卷</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">状态：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="draft">草稿</option>
+                  <option value="published">已发布</option>
+                  <option value="archived">已归档</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">分类：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="java">Java认证</option>
+                  <option value="web">Web前端认证</option>
+                  <option value="database">数据库认证</option>
+                  <option value="network">网络技术认证</option>
+                </select>
+              </div>
+            </div>
+            <div class="search-bar">
+              <input type="text" class="search-input" placeholder="搜索试卷名称、关键词...">
+              <button class="btn btn-primary search-btn">搜索</button>
+            </div>
+            <div class="tabs">
+              <div class="tab active">全部试卷</div>
+              <div class="tab">普通试卷</div>
+              <div class="tab">试卷模板</div>
+              <div class="tab">自动组卷</div>
+            </div>
+            <div class="tab-content">
+              <div class="paper-preview">
+                <div class="paper-info">
+                  <div class="paper-title">Java初级工程师认证考试</div>
+                  <div class="paper-meta">类型：普通试卷 | <span class="badge badge-success">已发布</span></div>
+                </div>
+                <div class="paper-stats">
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📝</span>
+                    <span>总题数：50</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">⏱️</span>
+                    <span>考试时长：120分钟</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">💯</span>
+                    <span>总分：100</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📅</span>
+                    <span>创建时间：2023-05-15</span>
+                  </div>
+                </div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">预览</button>
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-secondary">复制</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="paper-preview">
+                <div class="paper-info">
+                  <div class="paper-title">Web前端开发技能认证</div>
+                  <div class="paper-meta">类型：普通试卷 | <span class="badge badge-success">已发布</span></div>
+                </div>
+                <div class="paper-stats">
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📝</span>
+                    <span>总题数：45</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">⏱️</span>
+                    <span>考试时长：90分钟</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">💯</span>
+                    <span>总分：100</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📅</span>
+                    <span>创建时间：2023-06-10</span>
+                  </div>
+                </div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">预览</button>
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-secondary">复制</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="paper-preview">
+                <div class="paper-info">
+                  <div class="paper-title">数据库管理员基础模板</div>
+                  <div class="paper-meta">类型：试卷模板 | <span class="badge badge-info">模板</span></div>
+                </div>
+                <div class="paper-stats">
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📝</span>
+                    <span>题型配置：单选30%，多选30%，判断20%，问答20%</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">⏱️</span>
+                    <span>推荐时长：120分钟</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📅</span>
+                    <span>创建时间：2023-04-20</span>
+                  </div>
+                </div>
+                <div class="action-btns">
+                  <button class="btn btn-primary">使用模板</button>
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="paper-preview">
+                <div class="paper-info">
+                  <div class="paper-title">网络工程师认证考试（自动）</div>
+                  <div class="paper-meta">类型：自动组卷 | <span class="badge badge-warning">草稿</span></div>
+                </div>
+                <div class="paper-stats">
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📝</span>
+                    <span>总题数：60</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">⏱️</span>
+                    <span>考试时长：150分钟</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">💯</span>
+                    <span>总分：100</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📅</span>
+                    <span>创建时间：2023-07-05</span>
+                  </div>
+                </div>
+                <div class="action-btns">
+                  <button class="btn btn-primary">发布</button>
+                  <button class="btn btn-secondary">预览</button>
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="paper-preview">
+                <div class="paper-info">
+                  <div class="paper-title">Java高级工程师认证考试</div>
+                  <div class="paper-meta">类型：普通试卷 | <span class="badge badge-danger">已归档</span></div>
+                </div>
+                <div class="paper-stats">
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📝</span>
+                    <span>总题数：55</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">⏱️</span>
+                    <span>考试时长：180分钟</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">💯</span>
+                    <span>总分：150</span>
+                  </div>
+                  <div class="paper-stat">
+                    <span class="paper-stat-icon">📅</span>
+                    <span>创建时间：2022-12-01</span>
+                  </div>
+                </div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">预览</button>
+                  <button class="btn btn-primary">恢复</button>
+                  <button class="btn btn-danger">彻底删除</button>
+                </div>
+              </div>
+              <div class="pagination">
+                <div class="page-btn">«</div>
+                <div class="page-btn active">1</div>
+                <div class="page-btn">2</div>
+                <div class="page-btn">3</div>
+                <div class="page-btn">»</div>
+                <div class="page-info">共 28 条记录</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

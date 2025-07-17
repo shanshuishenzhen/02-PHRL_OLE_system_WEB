@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 阅卷中心模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .dashboard-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .dashboard-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .dashboard-card-icon {
+      font-size: 24px;
+      color: #1890ff;
+    }
+    .dashboard-card-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .dashboard-card-desc {
+      font-size: 14px;
+      color: #606266;
+    }
+    .dashboard-card.warning .dashboard-card-icon {
+      color: #faad14;
+    }
+    .dashboard-card.danger .dashboard-card-icon {
+      color: #ff4d4f;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+    }
+    .filter-label {
+      margin-right: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .filter-select {
+      padding: 6px 10px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+    }
+    .progress-bar {
+      height: 8px;
+      background-color: #e9e9e9;
+      border-radius: 4px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background-color: #1890ff;
+      border-radius: 4px;
+    }
+    .marking-area {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .question-panel {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .answer-panel {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .marking-panel {
+      width: 300px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .question-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .question-content {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .answer-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .answer-content {
+      margin-bottom: 20px;
+      line-height: 1.6;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      border-left: 4px solid #1890ff;
+    }
+    .marking-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .score-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      margin-bottom: 15px;
+    }
+    .comment-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      resize: vertical;
+      min-height: 100px;
+      margin-bottom: 15px;
+    }
+    .marking-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .marking-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .question-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .question-nav-item {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .question-nav-item:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .question-nav-item.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .question-nav-item.marked {
+      background-color: #52c41a;
+      color: #fff;
+      border-color: #52c41a;
+    }
+    .marking-progress {
+      margin-top: 20px;
+    }
+    .marking-progress-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .marking-progress-bar {
+      height: 8px;
+      background-color: #e9e9e9;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .marking-progress-inner {
+      height: 100%;
+      background-color: #52c41a;
+      border-radius: 4px;
+    }
+    .marking-rules {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      border-left: 4px solid #faad14;
+    }
+    .marking-rules-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .marking-rules-content {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .marking-rules-item {
+      margin-bottom: 8px;
+    }
+    .auto-marking-result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f0f9ff;
+      border-radius: 4px;
+      border-left: 4px solid #1890ff;
+    }
+    .auto-marking-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .auto-marking-content {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .auto-marking-score {
+      font-weight: bold;
+      color: #1890ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">阅卷中心模块</div>
+        <div class="sidebar-subtitle">Marking Center</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">阅卷概览</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">🤖</span>
+          <span class="menu-title">自动阅卷</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">✍️</span>
+          <span class="menu-title">手动阅卷</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📏</span>
+          <span class="menu-title">评分规则</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📈</span>
+          <span class="menu-title">批阅统计</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">阅卷中心</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">阅卷概览</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div class="user-name">管理员</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">阅卷概览</div>
+        
+        <div class="dashboard">
+          <div class="dashboard-card warning">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">待批主观题</div>
+              <div class="dashboard-card-icon">📝</div>
+            </div>
+            <div class="dashboard-card-value">42</div>
+            <div class="dashboard-card-desc">需要人工批阅的主观题数量</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">已批客观题</div>
+              <div class="dashboard-card-icon">✅</div>
+            </div>
+            <div class="dashboard-card-value">215</div>
+            <div class="dashboard-card-desc">系统自动批阅的客观题数量</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">批阅进度</div>
+              <div class="dashboard-card-icon">📊</div>
+            </div>
+            <div class="dashboard-card-value">83%</div>
+            <div class="dashboard-card-desc">
+              <div class="progress-bar">
+                <div class="progress-bar-inner" style="width: 83%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>待批阅试卷</span>
+            <div class="action-btns">
+              <button class="btn btn-primary">
+                <span class="btn-icon">🔄</span> 刷新列表
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">考试名称：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="java">Java初级工程师认证考试</option>
+                  <option value="web">Web前端开发技能认证</option>
+                  <option value="database">数据库管理员基础认证</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">试题类型：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="subjective" selected>主观题</option>
+                  <option value="objective">客观题</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">批阅状态：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="pending" selected>待批阅</option>
+                  <option value="in_progress">批阅中</option>
+                  <option value="completed">已批阅</option>
+                </select>
+              </div>
+            </div>
+            
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>考试名称</th>
+                  <th>考生姓名</th>
+                  <th>提交时间</th>
+                  <th>试题类型</th>
+                  <th>批阅状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Java初级工程师认证考试</td>
+                  <td>张三</td>
+                  <td>2023-06-10 10:30</td>
+                  <td>主观题</td>
+                  <td><span class="badge badge-warning">待批阅</span></td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-primary">开始批阅</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Web前端开发技能认证</td>
+                  <td>李四</td>
+                  <td>2023-06-10 11:15</td>
+                  <td>主观题</td>
+                  <td><span class="badge badge-warning">待批阅</span></td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-primary">开始批阅</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>数据库管理员基础认证</td>
+                  <td>王五</td>
+                  <td>2023-06-10 14:20</td>
+                  <td>主观题</td>
+                  <td><span class="badge badge-info">批阅中</span></td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-primary">继续批阅</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Python数据分析认证</td>
+                  <td>赵六</td>
+                  <td>2023-06-11 09:45</td>
+                  <td>主观题</td>
+                  <td><span class="badge badge-warning">待批阅</span></td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-primary">开始批阅</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>网络安全基础模拟考试</td>
+                  <td>钱七</td>
+                  <td>2023-06-11 10:30</td>
+                  <td>主观题</td>
+                  <td><span class="badge badge-warning">待批阅</span></td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-primary">开始批阅</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class="pagination">
+              <div class="page-btn">«</div>
+              <div class="page-btn active">1</div>
+              <div class="page-btn">2</div>
+              <div class="page-btn">3</div>
+              <div class="page-btn">»</div>
+              <div class="page-info">共 42 条记录</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>批阅示例</span>
+          </div>
+          <div class="card-body">
+            <div class="marking-area">
+              <div class="question-panel">
+                <div class="question-title">问题 3：简述Java中的多态性及其实现方式</div>
+                <div class="question-content">
+                  <p>请简要描述Java中的多态性概念，并详细说明Java中实现多态的三种方式，每种方式请给出简单的代码示例。</p>
+                  <p>（本题15分）</p>
+                </div>
+                <div class="marking-rules">
+                  <div class="marking-rules-title">评分标准：</div>
+                  <div class="marking-rules-content">
+                    <div class="marking-rules-item">- 正确描述多态概念（3分）</div>
+                    <div class="marking-rules-item">- 列举三种实现方式（每种2分，共6分）</div>
+                    <div class="marking-rules-item">- 每种方式提供正确代码示例（每种2分，共6分）</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="answer-panel">
+                <div class="answer-title">考生答案：</div>
+                <div class="answer-content">
+                  <p>Java中的多态性是指同一个行为具有多个不同表现形式或形态的能力。多态是同一个接口，使用不同的实例而执行不同操作。</p>
+                  <p>Java多态性实现方式：</p>
+                  <p>1. 继承实现多态：通过继承父类并重写父类方法</p>
+                  <pre>class Animal {
+    void sound() {
+        System.out.println("动物发出声音");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void sound() {
+        System.out.println("狗叫声");
+    }
+}
+
+Animal animal = new Dog();
+animal.sound(); // 输出：狗叫声</pre>
+                  
+                  <p>2. 接口实现多态：通过实现接口并实现接口方法</p>
+                  <pre>interface Shape {
+    double getArea();
+}
+
+class Circle implements Shape {
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    @Override
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+}
+
+Shape shape = new Circle(5);
+double area = shape.getArea();</pre>
+                  
+                  <p>3. 方法重载实现多态：同一个类中方法名相同但参数不同</p>
+                  <pre>class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+    
+    double add(double a, double b) {
+        return a + b;
+    }
+    
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}</pre>
+                </div>
+              </div>
+              
+              <div class="marking-panel">
+                <div class="marking-title">评分</div>
+                <div class="form-group">
+                  <label class="form-label">得分：</label>
+                  <input type="number" class="score-input" min="0" max="15" value="13">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">评语：</label>
+                  <textarea class="comment-textarea">多态概念描述正确，三种实现方式都有列举并提供了代码示例。但在接口实现多态的例子中，没有展示多态的使用效果，扣2分。</textarea>
+                </div>
+                
+                <div class="auto-marking-result">
+                  <div class="auto-marking-title">AI辅助评分建议：</div>
+                  <div class="auto-marking-content">
+                    <p>考生答案完整地描述了多态概念，并正确列举了三种实现方式，每种都有代码示例。</p>
+                    <p>建议得分：<span class="auto-marking-score">14/15</span></p>
+                  </div>
+                </div>
+                
+                <div class="marking-actions">
+                  <button class="btn btn-secondary">保存</button>
+                  <button class="btn btn-primary">提交</button>
+                </div>
+                
+                <div class="marking-progress">
+                  <div class="marking-progress-title">
+                    <span>批阅进度</span>
+                    <span>3/5</span>
+                  </div>
+                  <div class="marking-progress-bar">
+                    <div class="marking-progress-inner" style="width: 60%;"></div>
+                  </div>
+                </div>
+                
+                <div class="question-nav">
+                  <div class="question-nav-item marked">1</div>
+                  <div class="question-nav-item marked">2</div>
+                  <div class="question-nav-item active">3</div>
+                  <div class="question-nav-item">4</div>
+                  <div class="question-nav-item">5</div>
+                </div>
+                
+                <div class="marking-nav">
+                  <button class="btn btn-secondary">
+                    <span class="btn-icon">◀</span> 上一题
+                  </button>
+                  <button class="btn btn-secondary">
+                    下一题 <span class="btn-icon">▶</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>批阅统计</span>
+            <div class="action-btns">
+              <button class="btn btn-secondary">
+                <span class="btn-icon">📊</span> 导出报告
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">考试名称：</span>
+                <select class="filter-select">
+                  <option value="">全部考试</option>
+                  <option value="java" selected>Java初级工程师认证考试</option>
+                  <option value="web">Web前端开发技能认证</option>
+                  <option value="database">数据库管理员基础认证</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">时间范围：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="this_month" selected>本月</option>
+                  <option value="last_month">上月</option>
+                  <option value="this_quarter">本季度</option>
+                  <option value="last_quarter">上季度</option>
+                </select>
+              </div>
+            </div>
+            
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>试题编号</th>
+                  <th>试题类型</th>
+                  <th>批阅方式</th>
+                  <th>平均得分</th>
+                  <th>满分</th>
+                  <th>得分率</th>
+                  <th>批阅人次</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Q001</td>
+                  <td>单选题</td>
+                  <td>自动批阅</td>
+                  <td>4.2</td>
+                  <td>5</td>
+                  <td>84%</td>
+                  <td>62</td>
+                </tr>
+                <tr>
+                  <td>Q002</td>
+                  <td>多选题</td>
+                  <td>自动批阅</td>
+                  <td>7.8</td>
+                  <td>10</td>
+                  <td>78%</td>
+                  <td>62</td>
+                </tr>
+                <tr>
+                  <td>Q003</td>
+                  <td>判断题</td>
+                  <td>自动批阅</td>
+                  <td>2.5</td>
+                  <td>3</td>
+                  <td>83%</td>
+                  <td>62</td>
+                </tr>
+                <tr>
+                  <td>Q004</td>
+                  <td>填空题</td>
+                  <td>自动批阅</td>
+                  <td>6.2</td>
+                  <td>8</td>
+                  <td>77.5%</td>
+                  <td>62</td>
+                </tr>
+                <tr>
+                  <td>Q005</td>
+                  <td>简答题</td>
+                  <td>人工批阅</td>
+                  <td>11.5</td>
+                  <td>15</td>
+                  <td>76.7%</td>
+                  <td>58</td>
+                </tr>
+                <tr>
+                  <td>Q006</td>
+                  <td>编程题</td>
+                  <td>人工批阅</td>
+                  <td>18.2</td>
+                  <td>25</td>
+                  <td>72.8%</td>
+                  <td>55</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div style="margin-top: 20px;">
+              <h3 style="margin-bottom: 10px;">批阅效率统计</h3>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td><strong>平均批阅时间</strong></td>
+                    <td>3.5分钟/题</td>
+                    <td><strong>自动批阅比例</strong></td>
+                    <td>65%</td>
+                    <td><strong>人工批阅比例</strong></td>
+                    <td>35%</td>
+                  </tr>
+                  <tr>
+                    <td><strong>批阅教师数</strong></td>
+                    <td>5人</td>
+                    <td><strong>已批阅试卷</strong></td>
+                    <td>156份</td>
+                    <td><strong>待批阅试卷</strong></td>
+                    <td>42份</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabGroup = this.parentElement;
+        tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 问题导航切换
+    const questionNavItems = document.querySelectorAll('.question-nav-item');
+    questionNavItems.forEach(item => {
+      item.addEventListener('click', function() {
+        questionNavItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

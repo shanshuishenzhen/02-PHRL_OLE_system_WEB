@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 考生考试模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .exam-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+    .exam-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .exam-card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fafafa;
+    }
+    .exam-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .exam-card-body {
+      padding: 20px;
+    }
+    .exam-card-info {
+      margin-bottom: 15px;
+    }
+    .exam-card-info-item {
+      display: flex;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .exam-card-info-label {
+      width: 100px;
+      color: #606266;
+    }
+    .exam-card-info-value {
+      flex: 1;
+      font-weight: bold;
+    }
+    .exam-card-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .exam-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .dashboard-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .dashboard-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .dashboard-card-icon {
+      font-size: 24px;
+      color: #1890ff;
+    }
+    .dashboard-card-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .dashboard-card-desc {
+      font-size: 14px;
+      color: #606266;
+    }
+    .dashboard-card.warning .dashboard-card-icon {
+      color: #faad14;
+    }
+    .dashboard-card.danger .dashboard-card-icon {
+      color: #ff4d4f;
+    }
+    .countdown {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 10px;
+    }
+    .countdown-value {
+      font-size: 24px;
+      font-weight: bold;
+      background-color: #1890ff;
+      color: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 5px;
+    }
+    .countdown-label {
+      font-size: 12px;
+      color: #606266;
+    }
+    .countdown-separator {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: -25px;
+    }
+    .exam-status {
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .exam-status.upcoming {
+      background-color: #e6f7ff;
+      color: #1890ff;
+      border: 1px solid #91d5ff;
+    }
+    .exam-status.in-progress {
+      background-color: #f6ffed;
+      color: #52c41a;
+      border: 1px solid #b7eb8f;
+    }
+    .exam-status.completed {
+      background-color: #f0f2f5;
+      color: #606266;
+      border: 1px solid #d9d9d9;
+    }
+    .progress-bar {
+      height: 8px;
+      background-color: #e9e9e9;
+      border-radius: 4px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background-color: #1890ff;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">考生考试模块</div>
+        <div class="sidebar-subtitle">Student Examination</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">考试概览</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📝</span>
+          <span class="menu-title">即将考试</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📋</span>
+          <span class="menu-title">可参加考试</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">✅</span>
+          <span class="menu-title">已完成考试</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">🏆</span>
+          <span class="menu-title">我的证书</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">考生考试</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">考试概览</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">张</div>
+            <div class="user-name">张三</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">考试概览</div>
+        
+        <div class="dashboard">
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">即将考试</div>
+              <div class="dashboard-card-icon">📝</div>
+            </div>
+            <div class="dashboard-card-value">2</div>
+            <div class="dashboard-card-desc">您有2场考试即将开始</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">可参加考试</div>
+              <div class="dashboard-card-icon">📋</div>
+            </div>
+            <div class="dashboard-card-value">5</div>
+            <div class="dashboard-card-desc">您当前可以参加的考试数量</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">已完成考试</div>
+              <div class="dashboard-card-icon">✅</div>
+            </div>
+            <div class="dashboard-card-value">8</div>
+            <div class="dashboard-card-desc">您已完成的考试数量</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>最近考试</span>
+            <div class="action-btns">
+              <button class="btn btn-primary">
+                <span class="btn-icon">🔍</span> 查看全部考试
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tabs">
+              <div class="tab active">即将考试</div>
+              <div class="tab">可参加考试</div>
+              <div class="tab">已完成考试</div>
+            </div>
+            
+            <div class="tab-content">
+              <div class="exam-status upcoming">
+                <span>您有一场考试将在 1 天 6 小时后开始</span>
+              </div>
+              
+              <div class="countdown">
+                <div class="countdown-item">
+                  <div class="countdown-value">01</div>
+                  <div class="countdown-label">天</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                  <div class="countdown-value">06</div>
+                  <div class="countdown-label">时</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                  <div class="countdown-value">24</div>
+                  <div class="countdown-label">分</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                  <div class="countdown-value">38</div>
+                  <div class="countdown-label">秒</div>
+                </div>
+              </div>
+              
+              <div class="exam-grid">
+                <div class="exam-card">
+                  <div class="exam-card-header">
+                    <div class="exam-card-title">Java初级工程师认证考试</div>
+                    <div><span class="badge badge-warning">即将开始</span></div>
+                  </div>
+                  <div class="exam-card-body">
+                    <div class="exam-card-info">
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试时间：</div>
+                        <div class="exam-card-info-value">2023-06-15 09:00</div>
+                      </div>
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试时长：</div>
+                        <div class="exam-card-info-value">120分钟</div>
+                      </div>
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试地点：</div>
+                        <div class="exam-card-info-value">线上考试</div>
+                      </div>
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试状态：</div>
+                        <div class="exam-card-info-value">未开始</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="exam-card-footer">
+                    <button class="btn btn-secondary">
+                      <span class="btn-icon">📋</span> 查看详情
+                    </button>
+                    <button class="btn btn-primary" disabled>
+                      <span class="btn-icon">📝</span> 进入考试
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="exam-card">
+                  <div class="exam-card-header">
+                    <div class="exam-card-title">Web前端开发技能认证</div>
+                    <div><span class="badge badge-warning">即将开始</span></div>
+                  </div>
+                  <div class="exam-card-body">
+                    <div class="exam-card-info">
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试时间：</div>
+                        <div class="exam-card-info-value">2023-06-18 14:00</div>
+                      </div>
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试时长：</div>
+                        <div class="exam-card-info-value">90分钟</div>
+                      </div>
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试地点：</div>
+                        <div class="exam-card-info-value">线上考试</div>
+                      </div>
+                      <div class="exam-card-info-item">
+                        <div class="exam-card-info-label">考试状态：</div>
+                        <div class="exam-card-info-value">未开始</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="exam-card-footer">
+                    <button class="btn btn-secondary">
+                      <span class="btn-icon">📋</span> 查看详情
+                    </button>
+                    <button class="btn btn-primary" disabled>
+                      <span class="btn-icon">📝</span> 进入考试
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>可参加考试</span>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <input type="text" class="search-input" placeholder="搜索考试名称...">
+              <button class="btn btn-primary search-btn">搜索</button>
+            </div>
+            
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">考试类型：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="certification">认证考试</option>
+                  <option value="practice">模拟练习</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">难度级别：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="beginner">初级</option>
+                  <option value="intermediate">中级</option>
+                  <option value="advanced">高级</option>
+                </select>
+              </div>
+            </div>
+            
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>考试名称</th>
+                  <th>考试类型</th>
+                  <th>难度级别</th>
+                  <th>考试时长</th>
+                  <th>报名截止</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Python数据分析认证</td>
+                  <td>认证考试</td>
+                  <td>中级</td>
+                  <td>120分钟</td>
+                  <td>2023-06-30</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-secondary">查看详情</button>
+                      <button class="btn btn-primary">立即报名</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>数据库管理员基础认证</td>
+                  <td>认证考试</td>
+                  <td>初级</td>
+                  <td>90分钟</td>
+                  <td>2023-07-15</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-secondary">查看详情</button>
+                      <button class="btn btn-primary">立即报名</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>网络安全基础模拟考试</td>
+                  <td>模拟练习</td>
+                  <td>初级</td>
+                  <td>60分钟</td>
+                  <td>2023-08-01</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-secondary">查看详情</button>
+                      <button class="btn btn-primary">立即报名</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>云计算架构师认证</td>
+                  <td>认证考试</td>
+                  <td>高级</td>
+                  <td>180分钟</td>
+                  <td>2023-07-30</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-secondary">查看详情</button>
+                      <button class="btn btn-primary">立即报名</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>DevOps工程师模拟考试</td>
+                  <td>模拟练习</td>
+                  <td>中级</td>
+                  <td>120分钟</td>
+                  <td>2023-08-15</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn btn-secondary">查看详情</button>
+                      <button class="btn btn-primary">立即报名</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class="pagination">
+              <div class="page-btn">«</div>
+              <div class="page-btn active">1</div>
+              <div class="page-btn">2</div>
+              <div class="page-btn">3</div>
+              <div class="page-btn">»</div>
+              <div class="page-info">共 15 条记录</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>已完成考试</span>
+          </div>
+          <div class="card-body">
+            <div class="tabs">
+              <div class="tab active">全部</div>
+              <div class="tab">已通过</div>
+              <div class="tab">未通过</div>
+              <div class="tab">待评分</div>
+            </div>
+            
+            <div class="tab-content">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>考试名称</th>
+                    <th>考试时间</th>
+                    <th>考试用时</th>
+                    <th>得分</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Linux系统管理认证</td>
+                    <td>2023-05-10</td>
+                    <td>110分钟</td>
+                    <td>85</td>
+                    <td><span class="badge badge-success">通过</span></td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">查看详情</button>
+                        <button class="btn btn-primary">查看证书</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>前端开发基础认证</td>
+                    <td>2023-04-25</td>
+                    <td>85分钟</td>
+                    <td>92</td>
+                    <td><span class="badge badge-success">通过</span></td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">查看详情</button>
+                        <button class="btn btn-primary">查看证书</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>数据结构与算法模拟考试</td>
+                    <td>2023-05-05</td>
+                    <td>120分钟</td>
+                    <td>78</td>
+                    <td><span class="badge badge-success">通过</span></td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">查看详情</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>高级网络工程师认证</td>
+                    <td>2023-03-18</td>
+                    <td>165分钟</td>
+                    <td>65</td>
+                    <td><span class="badge badge-danger">未通过</span></td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">查看详情</button>
+                        <button class="btn btn-primary">重新报名</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>软件测试工程师认证</td>
+                    <td>2023-05-20</td>
+                    <td>100分钟</td>
+                    <td>-</td>
+                    <td><span class="badge badge-info">待评分</span></td>
+                    <td>
+                      <div class="action-btns">
+                        <button class="btn btn-secondary">查看详情</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <div class="pagination">
+                <div class="page-btn">«</div>
+                <div class="page-btn active">1</div>
+                <div class="page-btn">2</div>
+                <div class="page-btn">»</div>
+                <div class="page-info">共 8 条记录</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabGroup = this.parentElement;
+        tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+    
+    // 模拟倒计时
+    function updateCountdown() {
+      // 这里只是模拟，实际应用中应该计算真实的剩余时间
+      const days = document.querySelector('.countdown-item:nth-child(1) .countdown-value');
+      const hours = document.querySelector('.countdown-item:nth-child(3) .countdown-value');
+      const minutes = document.querySelector('.countdown-item:nth-child(5) .countdown-value');
+      const seconds = document.querySelector('.countdown-item:nth-child(7) .countdown-value');
+      
+      let sec = parseInt(seconds.textContent);
+      let min = parseInt(minutes.textContent);
+      let hr = parseInt(hours.textContent);
+      let day = parseInt(days.textContent);
+      
+      sec--;
+      if (sec < 0) {
+        sec = 59;
+        min--;
+        if (min < 0) {
+          min = 59;
+          hr--;
+          if (hr < 0) {
+            hr = 23;
+            day--;
+            if (day < 0) {
+              day = hr = min = sec = 0;
+            }
+          }
+        }
+      }
+      
+      days.textContent = day.toString().padStart(2, '0');
+      hours.textContent = hr.toString().padStart(2, '0');
+      minutes.textContent = min.toString().padStart(2, '0');
+      seconds.textContent = sec.toString().padStart(2, '0');
+    }
+    
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 数据分析模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .dashboard-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .dashboard-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .dashboard-card-icon {
+      font-size: 24px;
+      color: #1890ff;
+    }
+    .dashboard-card-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .dashboard-card-desc {
+      font-size: 14px;
+      color: #606266;
+    }
+    .dashboard-card.warning .dashboard-card-icon {
+      color: #faad14;
+    }
+    .dashboard-card.danger .dashboard-card-icon {
+      color: #ff4d4f;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+    }
+    .filter-label {
+      margin-right: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .filter-select {
+      padding: 6px 10px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+    }
+    .chart-container {
+      height: 300px;
+      margin-top: 20px;
+      position: relative;
+    }
+    .chart-bar {
+      position: absolute;
+      bottom: 0;
+      width: 40px;
+      background-color: #1890ff;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.3s;
+    }
+    .chart-bar-label {
+      position: absolute;
+      bottom: -25px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+    }
+    .chart-bar-value {
+      position: absolute;
+      top: -25px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+      gap: 20px;
+    }
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+    }
+    .chart-legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+    .chart-legend-text {
+      font-size: 14px;
+    }
+    .date-picker {
+      padding: 6px 10px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+    }
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .report-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .report-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.1);
+    }
+    .report-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .report-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .report-card-date {
+      font-size: 12px;
+      color: #909399;
+    }
+    .report-card-desc {
+      font-size: 14px;
+      color: #606266;
+      margin-bottom: 15px;
+      flex: 1;
+    }
+    .report-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .report-card-tags {
+      display: flex;
+      gap: 5px;
+    }
+    .report-card-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .report-card-action {
+      color: #1890ff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .dataset-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .dataset-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dataset-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.1);
+    }
+    .dataset-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .dataset-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .dataset-card-icon {
+      font-size: 24px;
+      color: #1890ff;
+    }
+    .dataset-card-desc {
+      font-size: 14px;
+      color: #606266;
+      margin-bottom: 15px;
+      flex: 1;
+    }
+    .dataset-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .dataset-card-info {
+      font-size: 12px;
+      color: #909399;
+    }
+    .dataset-card-action {
+      color: #1890ff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .chart-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chart-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .chart-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .chart-card-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .chart-card-action {
+      color: #1890ff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .chart-card-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+    .pie-chart {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #1890ff 0% 25%,
+        #52c41a 25% 55%,
+        #faad14 55% 75%,
+        #ff4d4f 75% 100%
+      );
+      position: relative;
+    }
+    .pie-chart::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      border-radius: 50%;
+    }
+    .bar-chart {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+    }
+    .bar-chart-bar {
+      width: 40px;
+      background-color: #1890ff;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+    }
+    .bar-chart-label {
+      position: absolute;
+      bottom: -25px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+    }
+    .line-chart {
+      width: 100%;
+      height: 200px;
+      position: relative;
+    }
+    .line-chart-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-bottom: 1px solid #dcdfe6;
+      border-left: 1px solid #dcdfe6;
+    }
+    .line-chart-path {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .line-chart-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      z-index: 2;
+    }
+    .line-chart-label {
+      position: absolute;
+      bottom: -25px;
+      font-size: 12px;
+      text-align: center;
+      width: 40px;
+    }
+    .line-chart-value {
+      position: absolute;
+      left: -40px;
+      font-size: 12px;
+      text-align: right;
+      width: 35px;
+    }
+    .scatter-chart {
+      width: 100%;
+      height: 200px;
+      position: relative;
+      border-bottom: 1px solid #dcdfe6;
+      border-left: 1px solid #dcdfe6;
+    }
+    .scatter-chart-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #1890ff;
+    }
+    .scatter-chart-label-x {
+      position: absolute;
+      bottom: -25px;
+      font-size: 12px;
+      text-align: center;
+      width: 40px;
+    }
+    .scatter-chart-label-y {
+      position: absolute;
+      left: -40px;
+      font-size: 12px;
+      text-align: right;
+      width: 35px;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">数据分析模块</div>
+        <div class="sidebar-subtitle">Data Analysis</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">分析概览</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📝</span>
+          <span class="menu-title">分析报告</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">🗃️</span>
+          <span class="menu-title">数据集</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📈</span>
+          <span class="menu-title">统计图表</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">🔍</span>
+          <span class="menu-title">数据挖掘</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">⚙️</span>
+          <span class="menu-title">分析设置</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">数据分析</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">分析概览</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div class="user-name">管理员</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">数据分析概览</div>
+        
+        <div class="dashboard">
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">分析报告</div>
+              <div class="dashboard-card-icon">📝</div>
+            </div>
+            <div class="dashboard-card-value">24</div>
+            <div class="dashboard-card-desc">已生成的分析报告数量</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">数据集</div>
+              <div class="dashboard-card-icon">🗃️</div>
+            </div>
+            <div class="dashboard-card-value">18</div>
+            <div class="dashboard-card-desc">可用于分析的数据集数量</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">统计图表</div>
+              <div class="dashboard-card-icon">📈</div>
+            </div>
+            <div class="dashboard-card-value">56</div>
+            <div class="dashboard-card-desc">已创建的统计图表数量</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>考试数据概览</span>
+            <div class="action-btns">
+              <button class="btn btn-secondary">
+                <span class="btn-icon">📊</span> 导出报告
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">考试类型：</span>
+                <select class="filter-select">
+                  <option value="all" selected>全部</option>
+                  <option value="certification">认证考试</option>
+                  <option value="practice">模拟考试</option>
+                  <option value="training">培训测试</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">时间范围：</span>
+                <select class="filter-select">
+                  <option value="week">近一周</option>
+                  <option value="month" selected>近一个月</option>
+                  <option value="quarter">近一季度</option>
+                  <option value="year">近一年</option>
+                </select>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin-top: 20px;">
+              <div style="flex: 1; background-color: #f9f9f9; padding: 15px; border-radius: 4px;">
+                <h3 style="margin-bottom: 10px;">考试统计</h3>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td>总考试数</td>
+                      <td><strong>156</strong></td>
+                    </tr>
+                    <tr>
+                      <td>已完成考试</td>
+                      <td><strong>142</strong></td>
+                    </tr>
+                    <tr>
+                      <td>进行中考试</td>
+                      <td><strong>14</strong></td>
+                    </tr>
+                    <tr>
+                      <td>平均考试时长</td>
+                      <td><strong>85分钟</strong></td>
+                    </tr>
+                    <tr>
+                      <td>平均参与人数</td>
+                      <td><strong>68人</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div style="flex: 1; background-color: #f9f9f9; padding: 15px; border-radius: 4px;">
+                <h3 style="margin-bottom: 10px;">成绩统计</h3>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td>平均分</td>
+                      <td><strong>78.5分</strong></td>
+                    </tr>
+                    <tr>
+                      <td>最高分</td>
+                      <td><strong>98分</strong></td>
+                    </tr>
+                    <tr>
+                      <td>最低分</td>
+                      <td><strong>42分</strong></td>
+                    </tr>
+                    <tr>
+                      <td>及格率</td>
+                      <td><strong>86.7%</strong></td>
+                    </tr>
+                    <tr>
+                      <td>优秀率</td>
+                      <td><strong>32.4%</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div style="flex: 1; background-color: #f9f9f9; padding: 15px; border-radius: 4px;">
+                <h3 style="margin-bottom: 10px;">试题统计</h3>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td>总试题数</td>
+                      <td><strong>2,456</strong></td>
+                    </tr>
+                    <tr>
+                      <td>平均难度</td>
+                      <td><strong>中等</strong></td>
+                    </tr>
+                    <tr>
+                      <td>平均区分度</td>
+                      <td><strong>0.68</strong></td>
+                    </tr>
+                    <tr>
+                      <td>最难试题类型</td>
+                      <td><strong>编程题</strong></td>
+                    </tr>
+                    <tr>
+                      <td>最易试题类型</td>
+                      <td><strong>单选题</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+              <h3 style="margin-bottom: 10px;">成绩分布</h3>
+              <div class="chart-container" style="display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 40px;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 30px; background-color: #ff4d4f;">
+                    <div class="chart-bar-value">3%</div>
+                  </div>
+                  <div class="chart-bar-label">0-30分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 50px; background-color: #faad14;">
+                    <div class="chart-bar-value">5%</div>
+                  </div>
+                  <div class="chart-bar-label">30-45分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 80px; background-color: #faad14;">
+                    <div class="chart-bar-value">8%</div>
+                  </div>
+                  <div class="chart-bar-label">45-60分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 150px; background-color: #1890ff;">
+                    <div class="chart-bar-value">15%</div>
+                  </div>
+                  <div class="chart-bar-label">60-70分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 200px; background-color: #1890ff;">
+                    <div class="chart-bar-value">20%</div>
+                  </div>
+                  <div class="chart-bar-label">70-80分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 250px; background-color: #52c41a;">
+                    <div class="chart-bar-value">25%</div>
+                  </div>
+                  <div class="chart-bar-label">80-90分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 180px; background-color: #52c41a;">
+                    <div class="chart-bar-value">18%</div>
+                  </div>
+                  <div class="chart-bar-label">90-95分</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div class="chart-bar" style="height: 60px; background-color: #52c41a;">
+                    <div class="chart-bar-value">6%</div>
+                  </div>
+                  <div class="chart-bar-label">95-100分</div>
+                </div>
+              </div>
+              
+              <div class="chart-legend">
+                <div class="chart-legend-item">
+                  <div class="chart-legend-color" style="background-color: #52c41a;"></div>
+                  <div class="chart-legend-text">优秀</div>
+                </div>
+                <div class="chart-legend-item">
+                  <div class="chart-legend-color" style="background-color: #1890ff;"></div>
+                  <div class="chart-legend-text">良好</div>
+                </div>
+                <div class="chart-legend-item">
+                  <div class="chart-legend-color" style="background-color: #faad14;"></div>
+                  <div class="chart-legend-text">不及格</div>
+                </div>
+                <div class="chart-legend-item">
+                  <div class="chart-legend-color" style="background-color: #ff4d4f;"></div>
+                  <div class="chart-legend-text">差</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>最近分析报告</span>
+            <div class="action-btns">
+              <button class="btn btn-primary">
+                <span class="btn-icon">📝</span> 新建报告
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="report-grid">
+              <div class="report-card">
+                <div class="report-card-header">
+                  <div class="report-card-title">Java初级工程师认证考试分析报告</div>
+                  <div class="report-card-date">2023-06-15</div>
+                </div>
+                <div class="report-card-desc">
+                  本报告分析了Java初级工程师认证考试的整体情况，包括考生成绩分布、试题难度分析、知识点掌握情况等。
+                </div>
+                <div class="report-card-footer">
+                  <div class="report-card-tags">
+                    <div class="report-card-tag">认证考试</div>
+                    <div class="report-card-tag">Java</div>
+                  </div>
+                  <div class="report-card-action">查看详情</div>
+                </div>
+              </div>
+              
+              <div class="report-card">
+                <div class="report-card-header">
+                  <div class="report-card-title">Python数据分析师认证考试趋势分析</div>
+                  <div class="report-card-date">2023-06-10</div>
+                </div>
+                <div class="report-card-desc">
+                  本报告对比分析了近三年Python数据分析师认证考试的趋势变化，包括考生人数、成绩分布、难度变化等。
+                </div>
+                <div class="report-card-footer">
+                  <div class="report-card-tags">
+                    <div class="report-card-tag">认证考试</div>
+                    <div class="report-card-tag">Python</div>
+                    <div class="report-card-tag">趋势分析</div>
+                  </div>
+                  <div class="report-card-action">查看详情</div>
+                </div>
+              </div>
+              
+              <div class="report-card">
+                <div class="report-card-header">
+                  <div class="report-card-title">Web前端开发工程师模拟考试分析</div>
+                  <div class="report-card-date">2023-06-05</div>
+                </div>
+                <div class="report-card-desc">
+                  本报告分析了Web前端开发工程师模拟考试的情况，为正式考试提供参考，包括易错点分析、知识盲区识别等。
+                </div>
+                <div class="report-card-footer">
+                  <div class="report-card-tags">
+                    <div class="report-card-tag">模拟考试</div>
+                    <div class="report-card-tag">Web前端</div>
+                  </div>
+                  <div class="report-card-action">查看详情</div>
+                </div>
+              </div>
+              
+              <div class="report-card">
+                <div class="report-card-header">
+                  <div class="report-card-title">数据库管理员认证考试试题分析</div>
+                  <div class="report-card-date">2023-06-01</div>
+                </div>
+                <div class="report-card-desc">
+                  本报告深入分析了数据库管理员认证考试的试题质量，包括区分度、难度系数、知识点覆盖率等指标。
+                </div>
+                <div class="report-card-footer">
+                  <div class="report-card-tags">
+                    <div class="report-card-tag">认证考试</div>
+                    <div class="report-card-tag">数据库</div>
+                    <div class="report-card-tag">试题分析</div>
+                  </div>
+                  <div class="report-card-action">查看详情</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>数据集</span>
+            <div class="action-btns">
+              <button class="btn btn-primary">
+                <span class="btn-icon">🗃️</span> 导入数据集
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <input type="text" class="search-input" placeholder="搜索数据集名称、描述...">
+              <button class="btn btn-primary search-btn">搜索</button>
+            </div>
+            
+            <div class="dataset-list">
+              <div class="dataset-card">
+                <div class="dataset-card-header">
+                  <div class="dataset-card-title">考试成绩数据集</div>
+                  <div class="dataset-card-icon">📊</div>
+                </div>
+                <div class="dataset-card-desc">
+                  包含所有考试的成绩数据，包括考生信息、考试信息、成绩详情等。
+                </div>
+                <div class="dataset-card-footer">
+                  <div class="dataset-card-info">更新于：2023-06-17</div>
+                  <div class="dataset-card-action">查看详情</div>
+                </div>
+              </div>
+              
+              <div class="dataset-card">
+                <div class="dataset-card-header">
+                  <div class="dataset-card-title">试题难度数据集</div>
+                  <div class="dataset-card-icon">📊</div>
+                </div>
+                <div class="dataset-card-desc">
+                  包含所有试题的难度数据，包括难度系数、区分度、正确率等指标。
+                </div>
+                <div class="dataset-card-footer">
+                  <div class="dataset-card-info">更新于：2023-06-15</div>
+                  <div class="dataset-card-action">查看详情</div>
+                </div>
+              </div>
+              
+              <div class="dataset-card">
+                <div class="dataset-card-header">
+                  <div class="dataset-card-title">考生行为数据集</div>
+                  <div class="dataset-card-icon">📊</div>
+                </div>
+                <div class="dataset-card-desc">
+                  包含考生在考试过程中的行为数据，包括答题时间、修改次数、浏览顺序等。
+                </div>
+                <div class="dataset-card-footer">
+                  <div class="dataset-card-info">更新于：2023-06-10</div>
+                  <div class="dataset-card-action">查看详情</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>统计图表</span>
+            <div class="action-btns">
+              <button class="btn btn-primary">
+                <span class="btn-icon">📈</span> 创建图表
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-grid">
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <div class="chart-card-title">考试成绩分布</div>
+                  <div class="chart-card-actions">
+                    <div class="chart-card-action">编辑</div>
+                    <div class="chart-card-action">导出</div>
+                  </div>
+                </div>
+                <div class="chart-card-body">
+                  <div class="pie-chart"></div>
+                </div>
+                <div class="chart-legend" style="margin-top: 20px;">
+                  <div class="chart-legend-item">
+                    <div class="chart-legend-color" style="background-color: #1890ff;"></div>
+                    <div class="chart-legend-text">优秀 (25%)</div>
+                  </div>
+                  <div class="chart-legend-item">
+                    <div class="chart-legend-color" style="background-color: #52c41a;"></div>
+                    <div class="chart-legend-text">良好 (30%)</div>
+                  </div>
+                  <div class="chart-legend-item">
+                    <div class="chart-legend-color" style="background-color: #faad14;"></div>
+                    <div class="chart-legend-text">及格 (20%)</div>
+                  </div>
+                  <div class="chart-legend-item">
+                    <div class="chart-legend-color" style="background-color: #ff4d4f;"></div>
+                    <div class="chart-legend-text">不及格 (25%)</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <div class="chart-card-title">考试参与人数趋势</div>
+                  <div class="chart-card-actions">
+                    <div class="chart-card-action">编辑</div>
+                    <div class="chart-card-action">导出</div>
+                  </div>
+                </div>
+                <div class="chart-card-body">
+                  <div class="line-chart">
+                    <div class="line-chart-line"></div>
+                    <svg class="line-chart-path" viewBox="0 0 400 200" preserveAspectRatio="none">
+                      <path d="M0,150 L50,120 L100,140 L150,100 L200,80 L250,60 L300,40 L350,50 L400,30" stroke="#1890ff" stroke-width="2" fill="none"></path>
+                    </svg>
+                    <div class="line-chart-dot" style="left: 0; top: 150px;"></div>
+                    <div class="line-chart-dot" style="left: 50px; top: 120px;"></div>
+                    <div class="line-chart-dot" style="left: 100px; top: 140px;"></div>
+                    <div class="line-chart-dot" style="left: 150px; top: 100px;"></div>
+                    <div class="line-chart-dot" style="left: 200px; top: 80px;"></div>
+                    <div class="line-chart-dot" style="left: 250px; top: 60px;"></div>
+                    <div class="line-chart-dot" style="left: 300px; top: 40px;"></div>
+                    <div class="line-chart-dot" style="left: 350px; top: 50px;"></div>
+                    <div class="line-chart-dot" style="left: 400px; top: 30px;"></div>
+                    
+                    <div class="line-chart-label" style="left: 0;">1月</div>
+                    <div class="line-chart-label" style="left: 50px;">2月</div>
+                    <div class="line-chart-label" style="left: 100px;">3月</div>
+                    <div class="line-chart-label" style="left: 150px;">4月</div>
+                    <div class="line-chart-label" style="left: 200px;">5月</div>
+                    <div class="line-chart-label" style="left: 250px;">6月</div>
+                    <div class="line-chart-label" style="left: 300px;">7月</div>
+                    <div class="line-chart-label" style="left: 350px;">8月</div>
+                    <div class="line-chart-label" style="left: 400px;">9月</div>
+                    
+                    <div class="line-chart-value" style="top: 0;">500</div>
+                    <div class="line-chart-value" style="top: 50px;">400</div>
+                    <div class="line-chart-value" style="top: 100px;">300</div>
+                    <div class="line-chart-value" style="top: 150px;">200</div>
+                    <div class="line-chart-value" style="top: 200px;">100</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <div class="chart-card-title">试题难度分布</div>
+                  <div class="chart-card-actions">
+                    <div class="chart-card-action">编辑</div>
+                    <div class="chart-card-action">导出</div>
+                  </div>
+                </div>
+                <div class="chart-card-body">
+                  <div class="bar-chart">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                      <div class="bar-chart-bar" style="height: 40px;">
+                      </div>
+                      <div class="bar-chart-label">简单</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                      <div class="bar-chart-bar" style="height: 80px;">
+                      </div>
+                      <div class="bar-chart-label">较易</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                      <div class="bar-chart-bar" style="height: 120px;">
+                      </div>
+                      <div class="bar-chart-label">中等</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                      <div class="bar-chart-bar" style="height: 80px;">
+                      </div>
+                      <div class="bar-chart-label">较难</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                      <div class="bar-chart-bar" style="height: 40px;">
+                      </div>
+                      <div class="bar-chart-label">困难</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <div class="chart-card-title">知识点掌握情况</div>
+                  <div class="chart-card-actions">
+                    <div class="chart-card-action">编辑</div>
+                    <div class="chart-card-action">导出</div>
+                  </div>
+                </div>
+                <div class="chart-card-body">
+                  <div class="scatter-chart">
+                    <div class="scatter-chart-dot" style="left: 50px; top: 50px;"></div>
+                    <div class="scatter-chart-dot" style="left: 80px; top: 120px;"></div>
+                    <div class="scatter-chart-dot" style="left: 120px; top: 80px;"></div>
+                    <div class="scatter-chart-dot" style="left: 150px; top: 30px;"></div>
+                    <div class="scatter-chart-dot" style="left: 180px; top: 100px;"></div>
+                    <div class="scatter-chart-dot" style="left: 220px; top: 150px;"></div>
+                    <div class="scatter-chart-dot" style="left: 250px; top: 70px;"></div>
+                    <div class="scatter-chart-dot" style="left: 280px; top: 120px;"></div>
+                    <div class="scatter-chart-dot" style="left: 320px; top: 40px;"></div>
+                    <div class="scatter-chart-dot" style="left: 350px; top: 90px;"></div>
+                    
+                    <div class="scatter-chart-label-x" style="left: 0;">基础</div>
+                    <div class="scatter-chart-label-x" style="left: 100px;">应用</div>
+                    <div class="scatter-chart-label-x" style="left: 200px;">分析</div>
+                    <div class="scatter-chart-label-x" style="left: 300px;">创新</div>
+                    
+                    <div class="scatter-chart-label-y" style="top: 0;">高</div>
+                    <div class="scatter-chart-label-y" style="top: 100px;">中</div>
+                    <div class="scatter-chart-label-y" style="top: 200px;">低</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabGroup = this.parentElement;
+        tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

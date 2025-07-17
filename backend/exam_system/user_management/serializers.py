@@ -35,6 +35,18 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return user
+        
+    def to_representation(self, instance):
+        # 无条件过滤phrladmin用户
+        if instance.username == 'phrladmin':
+            return None
+            
+        # 其他超级管理员用户，普通调用时过滤
+        request = self.context.get('request')
+        if not (request and '/launcher/' in request.path) and instance.is_superuser:
+            return None
+            
+        return super().to_representation(instance)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

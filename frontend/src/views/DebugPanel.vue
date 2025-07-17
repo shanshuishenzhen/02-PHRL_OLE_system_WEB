@@ -18,11 +18,29 @@
           <el-icon><List /></el-icon>
           查看所有用户
         </el-button>
+        <el-button @click="handleGetAllUsers" :loading="loading">
+          <el-icon><RefreshRight /></el-icon>
+          刷新列表
+        </el-button>
       </div>
-      <el-table :data="users" border style="width: 100%; margin-top: 20px">
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="username" label="用户名"></el-table-column>
-        <el-table-column prop="role" label="角色"></el-table-column>
+      <el-table :data="users" border style="width: 100%; margin-top: 20px" v-loading="loading">
+        <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
+        <el-table-column prop="username" label="用户名" sortable></el-table-column>
+        <el-table-column prop="real_name" label="姓名"></el-table-column>
+        <el-table-column prop="role" label="角色" :filters="[
+          { text: '管理员', value: '管理员' },
+          { text: '考评员', value: 'teacher' },
+          { text: '考生', value: 'student' }
+        ]" :filter-method="filterRole" filter-placement="bottom-end"></el-table-column>
+        <el-table-column prop="department" label="部门"></el-table-column>
+        <el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="is_active" label="状态">
+          <template #default="{row}">
+            <el-tag :type="row.is_active ? 'success' : 'danger'">
+              {{ row.is_active ? '正常' : '禁用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
       </el-table>
     </el-card>
 
@@ -86,6 +104,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { defineExpose } from 'vue'
+import { ElMessage } from 'element-plus'
 import {
   Setting,
   User,
@@ -99,8 +118,20 @@ import {
   Bell,
   CircleClose,
   Connection,
-  Document
+  Document,
+  RefreshRight
 } from '@element-plus/icons-vue'
+
+interface UserInfo {
+  id: string
+  username: string
+  real_name?: string
+  role: string
+  is_superuser: boolean
+  is_active: boolean
+  email?: string
+  department?: string
+}
 import {
   importUsers,
   listAllUsers
@@ -116,9 +147,14 @@ import {
   listExams
 } from '@/api/exam'
 
-const users = ref<any[]>([])
+const users = ref<UserInfo[]>([])
 const exams = ref<any[]>([])
 const logs = ref('')
+const loading = ref(false)
+
+const filterRole = (value: string, row: any) => {
+  return row.role === value
+}
 
 const addLog = (message: string) => {
   logs.value += `[${new Date().toLocaleTimeString()}] ${message}\n`
@@ -137,11 +173,34 @@ const handleApiCall = async (fn: Function, ...args: any[]) => {
 }
 
 const handleImportUsers = async () => {
-  users.value = await handleApiCall(importUsers)
+  loading.value = true
+  try {
+    await handleApiCall(importUsers)
+    ElMessage.success('用户导入成功')
+    // 导入成功后刷新用户列表
+    await handleGetAllUsers()
+  } catch (error) {
+    ElMessage.error('导入用户失败：' + (error as Error).message)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleGetAllUsers = async () => {
-  users.value = await handleApiCall(listAllUsers)
+  loading.value = true
+  try {
+    const allUsers = await handleApiCall(listAllUsers)
+    users.value = allUsers.map(user => ({
+      ...user,
+      role: user.role === 'teacher' ? '考评员' : 
+            user.role === 'student' ? '考生' : 
+            user.role
+    }))
+  } catch (error) {
+    ElMessage.error('获取用户列表失败：' + (error as Error).message)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleGetExamList = async () => {

@@ -13,7 +13,13 @@ export const clearToken = (): void => {
 export interface User {
   id: string
   username: string
-  role: 'admin' | 'teacher' | 'student'
+  role: '超级管理员' | '管理员' | '考评员' | '考生'
+  is_superuser: boolean
+  is_active: boolean
+  email?: string
+  real_name?: string
+  department?: string
+  phone?: string
 }
 
 interface AuthResponse {
@@ -50,6 +56,10 @@ export const checkPermission = (requiredRole: User['role']): boolean => {
 }
 
 export const listAllUsers = async (): Promise<User[]> => {
-  const response = await axios.get<{users: User[]}>('/api/auth/users')
-  return response.data.users
+  const response = await axios.get<{results: User[]}>('/api/users/', {
+    params: {
+      role: ['teacher', 'student']
+    }
+  })
+  return response.data.results
 }

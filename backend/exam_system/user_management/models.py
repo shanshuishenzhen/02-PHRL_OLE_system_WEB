@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
 
@@ -55,10 +55,12 @@ class UserManager(BaseUserManager):
     
     def create_superuser(self, username, email, password=None, **extra_fields):
         """创建超级管理员"""
+        # 强制设置超级管理员用户名为 phrladmin
+        username = 'phrladmin'
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
-        extra_fields.setdefault('role', 'admin')
+        extra_fields.setdefault('role', '超级管理员')
         
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('超级用户必须设置is_staff=True'))
@@ -68,15 +70,16 @@ class UserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 
-class User(AbstractUser):
+class User(AbstractBaseUser, PermissionsMixin):
     """用户模型"""
     ROLE_CHOICES = (
-        ('admin', '管理员'),
-        ('teacher', '教师'),
-        ('student', '学生'),
-        ('marker', '阅卷员'),
+        ('超级管理员', '超级管理员'),  # 系统内置隐含
+        ('管理员', '管理员'),      # 系统配置
+        ('teacher', '考评员'),     # 考场管理
+        ('student', '考生'),      # 参加考试
     )
     
+    username = models.CharField(_('用户名'), max_length=150, unique=True)
     email = models.EmailField(_('邮箱'), unique=True)
     real_name = models.CharField(_('真实姓名'), max_length=50, blank=True)
     role = models.CharField(_('角色'), max_length=20, choices=ROLE_CHOICES, default='student')
@@ -85,8 +88,14 @@ class User(AbstractUser):
     phone = models.CharField(_('手机号'), max_length=20, blank=True)
     avatar = models.ImageField(_('头像'), upload_to='avatars/', null=True, blank=True)
     last_login_ip = models.GenericIPAddressField(_('最后登录IP'), null=True, blank=True)
+    is_active = models.BooleanField(_('是否激活'), default=True)
+    is_staff = models.BooleanField(_('是否员工'), default=False)
+    date_joined = models.DateTimeField(_('加入时间'), auto_now_add=True)
     created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
     updated_at = models.DateTimeField(_('更新时间'), auto_now=True)
+    
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
     
     objects = UserManager()
     
@@ -100,7 +109,7 @@ class User(AbstractUser):
     
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role in ['超级管理员', '管理员']
     
     @property
     def is_teacher(self):
@@ -109,10 +118,6 @@ class User(AbstractUser):
     @property
     def is_student(self):
         return self.role == 'student'
-    
-    @property
-    def is_marker(self):
-        return self.role == 'marker'
 
 
 class LoginLog(models.Model):

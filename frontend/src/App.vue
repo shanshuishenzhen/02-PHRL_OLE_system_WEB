@@ -25,6 +25,7 @@ import { defineComponent } from 'vue'
 import { ElConfigProvider, ElIcon } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { Loading } from '@element-plus/icons-vue'
+import { useUserStore } from './stores/user'
 
 export default defineComponent({
   name: 'App',
@@ -34,8 +35,14 @@ export default defineComponent({
     Loading
   },
   setup() {
+    const userStore = useUserStore()
+
+    // 在这里可以添加初始化用户状态的逻辑
+    // 例如从本地存储或API获取用户信息
+
     return {
-      zhCn
+      zhCn,
+      userStore
     }
   }
 })

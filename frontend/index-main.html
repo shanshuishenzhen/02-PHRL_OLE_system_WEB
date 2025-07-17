@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 主页</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #303133;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #304156;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 10px 0 0;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: all 0.3s;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.1);
+    }
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #303133;
+    }
+    .card-description {
+      font-size: 14px;
+      color: #606266;
+      margin-bottom: 15px;
+      flex-grow: 1;
+    }
+    .card-button {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #409EFF;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      margin-top: auto;
+    }
+    .card-button:hover {
+      background-color: #66b1ff;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 30px 0 20px;
+      color: #303133;
+      border-bottom: 1px solid #EBEEF5;
+      padding-bottom: 10px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 20px 0;
+      color: #909399;
+      font-size: 14px;
+      border-top: 1px solid #EBEEF5;
+    }
+    .debug-panel {
+      background-color: #f0f9eb;
+      border: 1px solid #e1f3d8;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+    .debug-panel-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #67C23A;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .debug-panel-title:before {
+      content: '🔧';
+      margin-right: 8px;
+    }
+    .debug-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .debug-link {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #67C23A;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      font-size: 14px;
+    }
+    .debug-link:hover {
+      background-color: #85ce61;
+    }
+    .login-options {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .login-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #303133;
+      transition: all 0.3s;
+    }
+    .login-option:hover {
+      transform: translateY(-5px);
+    }
+    .login-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #ecf5ff;
+      color: #409EFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .login-icon.student {
+      background-color: #ecf5ff;
+      color: #409EFF;
+    }
+    .login-icon.teacher {
+      background-color: #f0f9eb;
+      color: #67C23A;
+    }
+    .login-icon.admin {
+      background-color: #fdf6ec;
+      color: #E6A23C;
+    }
+    .login-label {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .login-description {
+      font-size: 14px;
+      color: #909399;
+      text-align: center;
+      margin-top: 5px;
+    }
+    .system-status {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .status-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #303133;
+      display: flex;
+      align-items: center;
+    }
+    .status-title:before {
+      content: '🔄';
+      margin-right: 8px;
+    }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+    }
+    .status-label {
+      margin-right: 10px;
+      color: #606266;
+    }
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    .status-indicator.online {
+      background-color: #67C23A;
+    }
+    .status-indicator.offline {
+      background-color: #F56C6C;
+    }
+    .status-indicator.warning {
+      background-color: #E6A23C;
+    }
+    .status-text {
+      font-size: 14px;
+    }
+    .status-text.online {
+      color: #67C23A;
+    }
+    .status-text.offline {
+      color: #F56C6C;
+    }
+    .status-text.warning {
+      color: #E6A23C;
+    }
+    .shortcut-hint {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #909399;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.show {
+      display: flex;
+    }
+    .modal-content {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #EBEEF5;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #303133;
+    }
+    .modal-close {
+      font-size: 20px;
+      cursor: pointer;
+      color: #909399;
+    }
+    .modal-body {
+      margin-bottom: 20px;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .modal-button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .modal-button.primary {
+      background-color: #409EFF;
+      color: white;
+    }
+    .modal-button.primary:hover {
+      background-color: #66b1ff;
+    }
+    .modal-button.cancel {
+      background-color: #909399;
+      color: white;
+    }
+    .modal-button.cancel:hover {
+      background-color: #a6a9ad;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1>职业技能等级认证考试系统</h1>
+      <p>全面的在线考试解决方案，支持多种题型、自动评分和证书管理</p>
+    </div>
+
+    <!-- 调试面板 -->
+    <div class="debug-panel">
+      <div class="debug-panel-title">调试工具</div>
+      <div class="debug-links">
+        <a href="debug-dashboard.html" class="debug-link">调试面板</a>
+        <a href="api-tester.html" class="debug-link">API测试工具</a>
+        <a href="http://localhost:8000/admin/" target="_blank" class="debug-link">Django管理后台</a>
+        <a href="http://localhost:8000/api/docs/" target="_blank" class="debug-link">API文档</a>
+      </div>
+    </div>
+
+    <!-- 系统状态 -->
+    <div class="system-status">
+      <div class="status-title">系统状态</div>
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="status-label">前端服务：</div>
+          <div class="status-indicator online"></div>
+          <div class="status-text online">在线</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">后端API：</div>
+          <div class="status-indicator online"></div>
+          <div class="status-text online">在线</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">数据库：</div>
+          <div class="status-indicator online"></div>
+          <div class="status-text online">在线</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">缓存服务：</div>
+          <div class="status-indicator online"></div>
+          <div class="status-text online">在线</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">WebSocket：</div>
+          <div class="status-indicator online"></div>
+          <div class="status-text online">在线</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">文件存储：</div>
+          <div class="status-indicator online"></div>
+          <div class="status-text online">在线</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 登录选项 -->
+    <div class="section-title">选择登录方式</div>
+    <div class="login-options">
+      <a href="login.html?type=student" class="login-option">
+        <div class="login-icon student">👨‍🎓</div>
+        <div class="login-label">考生登录</div>
+        <div class="login-description">参加考试、查看成绩和证书</div>
+      </a>
+      <a href="login.html?type=teacher" class="login-option">
+        <div class="login-icon teacher">👨‍🏫</div>
+        <div class="login-label">考评员登录</div>
+        <div class="login-description">管理试题、试卷和阅卷</div>
+      </a>
+      <a href="login.html?type=admin" class="login-option">
+        <div class="login-icon admin">👨‍💼</div>
+        <div class="login-label">管理员登录</div>
+        <div class="login-description">系统管理和数据分析</div>
+      </a>
+    </div>
+
+    <!-- 功能模块 -->
+    <div class="section-title">功能模块演示</div>
+    <div class="card-container">
+      <div class="card">
+        <div class="card-icon">👤</div>
+        <div class="card-title">用户管理</div>
+        <div class="card-description">管理考生、教师和管理员账户，设置权限和角色</div>
+        <a href="admin-demo.html#user-management" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">📚</div>
+        <div class="card-title">题库管理</div>
+        <div class="card-description">创建和管理各类题型，支持分类、标签和难度设置</div>
+        <a href="admin-demo.html#question-bank" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">📝</div>
+        <div class="card-title">试卷管理</div>
+        <div class="card-description">创建试卷、设置考试规则和发布考试计划</div>
+        <a href="admin-demo.html#paper-management" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">👁️</div>
+        <div class="card-title">考试监控</div>
+        <div class="card-description">实时监控考试进度、作弊检测和异常处理</div>
+        <a href="admin-demo.html#exam-monitoring" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">成绩管理</div>
+        <div class="card-description">查看和管理考试成绩，生成成绩报表和统计分析</div>
+        <a href="admin-demo.html#score-management" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">✅</div>
+        <div class="card-title">阅卷中心</div>
+        <div class="card-description">自动阅卷和人工阅卷，评分标准设置和成绩审核</div>
+        <a href="teacher-demo.html#marking-center" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">考生考试</div>
+        <div class="card-description">在线答题、自动保存、断网恢复和提交试卷</div>
+        <a href="exam-demo.html" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <div class="card-title">证书管理</div>
+        <div class="card-description">生成和管理电子证书，支持验证和下载</div>
+        <a href="student-demo.html#certificates" class="card-button">查看演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <div class="card-title">数据分析</div>
+        <div class="card-description">考试数据分析、难度分析和学习进度跟踪</div>
+        <a href="admin-demo.html#data-analysis" class="card-button">查看演示</a>
+      </div>
+    </div>
+
+    <!-- 角色演示 -->
+    <div class="section-title">角色演示</div>
+    <div class="card-container">
+      <div class="card">
+        <div class="card-icon">👨‍🎓</div>
+        <div class="card-title">考生界面</div>
+        <div class="card-description">查看考试、参加考试、查看成绩和证书</div>
+        <a href="student-demo.html" class="card-button">进入演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">👨‍🏫</div>
+        <div class="card-title">教师界面</div>
+        <div class="card-description">管理试题、试卷、监考和阅卷</div>
+        <a href="teacher-demo.html" class="card-button">进入演示</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">👨‍💼</div>
+        <div class="card-title">管理员界面</div>
+        <div class="card-description">系统管理、用户管理和数据分析</div>
+        <a href="admin-demo.html" class="card-button">进入演示</a>
+      </div>
+    </div>
+
+    <div class="shortcut-hint">按下 <strong>Alt+D</strong> 快速进入调试模式</div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>职业技能等级认证考试系统 &copy; 2023 版权所有</p>
+      <p>技术支持：考试系统开发团队</p>
+    </div>
+  </div>
+
+  <!-- 系统状态检查模态框 -->
+  <div class="modal" id="status-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">系统状态检查</div>
+        <div class="modal-close" id="close-status-modal">×</div>
+      </div>
+      <div class="modal-body">
+        <p>正在检查系统各组件状态...</p>
+        <div id="status-check-results"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button primary" id="refresh-status">刷新状态</button>
+        <button class="modal-button cancel" id="close-status-button">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 系统状态检查
+    document.addEventListener('DOMContentLoaded', function() {
+      const statusItems = document.querySelectorAll('.status-item');
+      const statusModal = document.getElementById('status-modal');
+      const closeStatusModal = document.getElementById('close-status-modal');
+      const closeStatusButton = document.getElementById('close-status-button');
+      const refreshStatusButton = document.getElementById('refresh-status');
+      const statusCheckResults = document.getElementById('status-check-results');
+
+      // 模拟检查系统状态
+      function checkSystemStatus() {
+        const components = [
+          { name: '前端服务', url: window.location.href },
+          { name: '后端API', url: 'http://localhost:8000/api/' },
+          { name: '数据库', status: 'online' },
+          { name: '缓存服务', status: 'online' },
+          { name: 'WebSocket', status: 'online' },
+          { name: '文件存储', status: 'online' }
+        ];
+
+        statusCheckResults.innerHTML = '';
+        
+        components.forEach(component => {
+          const status = Math.random() > 0.2 ? 'online' : 'warning';
+          const statusText = status === 'online' ? '正常' : '警告';
+          
+          const resultItem = document.createElement('div');
+          resultItem.style.margin = '10px 0';
+          resultItem.style.display = 'flex';
+          resultItem.style.alignItems = 'center';
+          
+          resultItem.innerHTML = `
+            <div style="margin-right: 10px;">${component.name}：</div>
+            <div class="status-indicator ${status}" style="margin-right: 5px;"></div>
+            <div class="status-text ${status}">${statusText}</div>
+          `;
+          
+          statusCheckResults.appendChild(resultItem);
+        });
+      }
+
+      // 点击系统状态区域打开模态框
+      document.querySelector('.system-status').addEventListener('click', function() {
+        statusModal.classList.add('show');
+        checkSystemStatus();
+      });
+
+      // 关闭模态框
+      closeStatusModal.addEventListener('click', function() {
+        statusModal.classList.remove('show');
+      });
+
+      closeStatusButton.addEventListener('click', function() {
+        statusModal.classList.remove('show');
+      });
+
+      // 刷新状态
+      refreshStatusButton.addEventListener('click', checkSystemStatus);
+
+      // 快捷键进入调试模式
+      document.addEventListener('keydown', function(event) {
+        // Alt+D
+        if (event.altKey && event.key === 'd') {
+          window.location.href = 'debug-dashboard.html';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

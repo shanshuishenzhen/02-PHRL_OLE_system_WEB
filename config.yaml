@@ -1,0 +1,36 @@
+# 系统配置文件
+
+# 服务器配置
+server:
+  django:
+    host: 0.0.0.0
+    port: 8000
+  frontend:
+    host: localhost
+    port: 5182
+
+# 超时配置
+timeout:
+  server_start: 180  # 服务器启动超时时间（秒）
+  health_check_interval: 5  # 健康检查间隔（秒）
+  retry_count: 3  # 健康检查重试次数
+
+# 环境要求
+environment:
+  python:
+    min_version: [3, 8]  # 最低Python版本
+  node:
+    min_version: 16  # 最低Node.js版本
+
+# 日志配置
+logging:
+  directory: logs
+  level: INFO
+  max_size: 1048576  # 1MB
+  backup_count: 5
+
+# 安全配置
+security:
+  enable_process_check: true  # 是否启用进程权限检查
+  encrypt_config: false  # 是否加密配置文件
+  confirm_sensitive_operations: true  # 是否确认敏感操作

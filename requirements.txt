@@ -67,7 +67,7 @@ colorama==0.4.6
 six==1.16.0
 setuptools==80.9.0
 wheel==0.45.1
-packaging==25.0
+packaging>=21.3
 
 # 时间处理
 python-dateutil==2.9.0.post0

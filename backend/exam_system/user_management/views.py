@@ -26,6 +26,32 @@ class UserViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id', 'username', 'date_joined', 'last_login']
     ordering = ['-date_joined']
     
+    def get_queryset(self):
+        """过滤掉超级管理员用户，并根据角色过滤"""
+        queryset = super().get_queryset()
+        # 先过滤掉超级管理员用户
+        queryset = queryset.filter(is_superuser=False)
+        # 再过滤掉角色为超级管理员的用户
+        queryset = queryset.exclude(role='超级管理员')
+        # 最后过滤掉admin用户
+        queryset = queryset.exclude(username='admin')
+        # 根据请求参数中的角色进行过滤
+        role = self.request.query_params.getlist('role')
+        if role:
+            queryset = queryset.filter(role__in=role)
+        return queryset
+
+class LauncherUserViewSet(UserViewSet):
+    """启动器专用用户视图集"""
+    def get_queryset(self):
+        """不过滤admin用户"""
+        queryset = super(UserViewSet, self).get_queryset()
+        # 根据请求参数中的角色进行过滤
+        role = self.request.query_params.getlist('role')
+        if role:
+            queryset = queryset.filter(role__in=role)
+        return queryset
+    
     def get_permissions(self):
         """根据不同的操作设置不同的权限"""
         if self.action in ['create', 'list', 'destroy']:
@@ -176,7 +202,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     def users(self, request, pk=None):
         """获取部门下的所有用户"""
         department = self.get_object()
-        users = User.objects.filter(department=department)
+        users = User.objects.filter(department=department, is_superuser=False)
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
     

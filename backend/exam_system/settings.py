@@ -22,9 +22,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'exam_system.user_management',  # 自定义用户模型
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_filters',
     # 自定义应用
-    'exam_system.user_management',
     'exam_system.question_bank',
     'exam_system.paper_management',
     'exam_system.exam_monitoring',
@@ -65,6 +64,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+            os.path.join(BASE_DIR, '../frontend'),  # 前端目录
             os.path.join(BASE_DIR, '../frontend/dist'),  # 前端构建目录
             os.path.join(BASE_DIR, 'templates')
         ],

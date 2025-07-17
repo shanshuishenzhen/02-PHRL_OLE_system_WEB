@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 考试监控模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .dashboard-card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .dashboard-card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .dashboard-card-icon {
+      font-size: 24px;
+      color: #1890ff;
+    }
+    .dashboard-card-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .dashboard-card-desc {
+      font-size: 14px;
+      color: #606266;
+    }
+    .dashboard-card.warning .dashboard-card-icon {
+      color: #faad14;
+    }
+    .dashboard-card.danger .dashboard-card-icon {
+      color: #ff4d4f;
+    }
+    .exam-list {
+      margin-bottom: 20px;
+    }
+    .exam-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      border-left: 3px solid #1890ff;
+    }
+    .exam-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .exam-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .exam-status {
+      font-size: 14px;
+    }
+    .exam-info {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .exam-info-item {
+      display: flex;
+      align-items: center;
+    }
+    .exam-info-icon {
+      margin-right: 5px;
+    }
+    .exam-progress {
+      height: 8px;
+      background-color: #e9e9e9;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .exam-progress-bar {
+      height: 100%;
+      background-color: #1890ff;
+      border-radius: 4px;
+    }
+    .exam-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .exam-stats {
+      display: flex;
+      gap: 15px;
+      font-size: 14px;
+    }
+    .alert-list {
+      margin-top: 20px;
+    }
+    .alert-item {
+      background-color: #fff2f0;
+      border: 1px solid #ffccc7;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    .alert-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .alert-title {
+      font-weight: bold;
+      color: #ff4d4f;
+      display: flex;
+      align-items: center;
+    }
+    .alert-icon {
+      margin-right: 5px;
+    }
+    .alert-time {
+      font-size: 12px;
+      color: #606266;
+    }
+    .alert-content {
+      margin-bottom: 10px;
+    }
+    .alert-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .student-list {
+      margin-top: 20px;
+    }
+    .student-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .student-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .student-info {
+      flex: 1;
+    }
+    .student-name {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    .student-id {
+      font-size: 12px;
+      color: #606266;
+    }
+    .student-status {
+      margin-left: 10px;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+    }
+    .filter-label {
+      margin-right: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .filter-select {
+      padding: 6px 10px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">考试监控模块</div>
+        <div class="sidebar-subtitle">Exam Monitoring</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">监控概览</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📝</span>
+          <span class="menu-title">进行中考试</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">👥</span>
+          <span class="menu-title">在线考生</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">⚠️</span>
+          <span class="menu-title">异常警报</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📈</span>
+          <span class="menu-title">实时统计</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">考试监控</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">监控概览</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div class="user-name">管理员</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">监控概览</div>
+        
+        <div class="dashboard">
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">进行中考试</div>
+              <div class="dashboard-card-icon">📝</div>
+            </div>
+            <div class="dashboard-card-value">5</div>
+            <div class="dashboard-card-desc">当前正在进行的考试数量</div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">在线考生</div>
+              <div class="dashboard-card-icon">👥</div>
+            </div>
+            <div class="dashboard-card-value">128</div>
+            <div class="dashboard-card-desc">当前参加考试的考生数量</div>
+          </div>
+          <div class="dashboard-card warning">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">异常警报</div>
+              <div class="dashboard-card-icon">⚠️</div>
+            </div>
+            <div class="dashboard-card-value">7</div>
+            <div class="dashboard-card-desc">需要处理的异常行为警报</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>进行中考试</span>
+            <div class="action-btns">
+              <button class="btn btn-secondary">
+                <span class="btn-icon">🔄</span> 刷新
+              </button>
+              <button class="btn btn-primary">
+                <span class="btn-icon">📊</span> 导出报告
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">状态：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="in_progress" selected>进行中</option>
+                  <option value="about_to_start">即将开始</option>
+                  <option value="completed">已结束</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">类型：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="certification">认证考试</option>
+                  <option value="practice">模拟练习</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="exam-list">
+              <div class="exam-item">
+                <div class="exam-header">
+                  <div class="exam-title">Java初级工程师认证考试</div>
+                  <div class="exam-status"><span class="badge badge-success">进行中</span></div>
+                </div>
+                <div class="exam-info">
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">⏱️</span>
+                    <span>已进行: 45分钟 / 总时长: 120分钟</span>
+                  </div>
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">👥</span>
+                    <span>参考人数: 42人</span>
+                  </div>
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">⚠️</span>
+                    <span>异常警报: 2个</span>
+                  </div>
+                </div>
+                <div class="exam-progress">
+                  <div class="exam-progress-bar" style="width: 37.5%;"></div>
+                </div>
+                <div class="exam-footer">
+                  <div class="exam-stats">
+                    <div>开始时间: 09:00</div>
+                    <div>结束时间: 11:00</div>
+                    <div>监考老师: 张教师</div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看详情</button>
+                    <button class="btn btn-danger">紧急通知</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="exam-item">
+                <div class="exam-header">
+                  <div class="exam-title">Web前端开发技能认证</div>
+                  <div class="exam-status"><span class="badge badge-success">进行中</span></div>
+                </div>
+                <div class="exam-info">
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">⏱️</span>
+                    <span>已进行: 30分钟 / 总时长: 90分钟</span>
+                  </div>
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">👥</span>
+                    <span>参考人数: 35人</span>
+                  </div>
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">⚠️</span>
+                    <span>异常警报: 1个</span>
+                  </div>
+                </div>
+                <div class="exam-progress">
+                  <div class="exam-progress-bar" style="width: 33.3%;"></div>
+                </div>
+                <div class="exam-footer">
+                  <div class="exam-stats">
+                    <div>开始时间: 09:30</div>
+                    <div>结束时间: 11:00</div>
+                    <div>监考老师: 李教师</div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看详情</button>
+                    <button class="btn btn-danger">紧急通知</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="exam-item">
+                <div class="exam-header">
+                  <div class="exam-title">数据库管理员基础认证</div>
+                  <div class="exam-status"><span class="badge badge-success">进行中</span></div>
+                </div>
+                <div class="exam-info">
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">⏱️</span>
+                    <span>已进行: 60分钟 / 总时长: 120分钟</span>
+                  </div>
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">👥</span>
+                    <span>参考人数: 28人</span>
+                  </div>
+                  <div class="exam-info-item">
+                    <span class="exam-info-icon">⚠️</span>
+                    <span>异常警报: 3个</span>
+                  </div>
+                </div>
+                <div class="exam-progress">
+                  <div class="exam-progress-bar" style="width: 50%;"></div>
+                </div>
+                <div class="exam-footer">
+                  <div class="exam-stats">
+                    <div>开始时间: 08:30</div>
+                    <div>结束时间: 10:30</div>
+                    <div>监考老师: 王教师</div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看详情</button>
+                    <button class="btn btn-danger">紧急通知</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>异常警报</span>
+            <div class="action-btns">
+              <button class="btn btn-secondary">
+                <span class="btn-icon">🔄</span> 刷新
+              </button>
+              <button class="btn btn-primary">
+                <span class="btn-icon">✅</span> 全部标记为已处理
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="alert-list">
+              <div class="alert-item">
+                <div class="alert-header">
+                  <div class="alert-title">
+                    <span class="alert-icon">⚠️</span>
+                    <span>切换窗口警报</span>
+                  </div>
+                  <div class="alert-time">10分钟前</div>
+                </div>
+                <div class="alert-content">
+                  考生 <strong>李明</strong> (学号: S20230102) 在 <strong>Java初级工程师认证考试</strong> 中频繁切换窗口，可能存在作弊行为。
+                </div>
+                <div class="alert-footer">
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看详情</button>
+                    <button class="btn btn-primary">发送警告</button>
+                    <button class="btn btn-danger">强制交卷</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="alert-item">
+                <div class="alert-header">
+                  <div class="alert-title">
+                    <span class="alert-icon">⚠️</span>
+                    <span>人脸识别异常</span>
+                  </div>
+                  <div class="alert-time">15分钟前</div>
+                </div>
+                <div class="alert-content">
+                  考生 <strong>张华</strong> (学号: S20230205) 在 <strong>Web前端开发技能认证</strong> 中人脸识别失败多次，可能存在替考行为。
+                </div>
+                <div class="alert-footer">
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看详情</button>
+                    <button class="btn btn-primary">发送警告</button>
+                    <button class="btn btn-danger">强制交卷</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="alert-item">
+                <div class="alert-header">
+                  <div class="alert-title">
+                    <span class="alert-icon">⚠️</span>
+                    <span>异常操作警报</span>
+                  </div>
+                  <div class="alert-time">20分钟前</div>
+                </div>
+                <div class="alert-content">
+                  考生 <strong>王芳</strong> (学号: S20230308) 在 <strong>数据库管理员基础认证</strong> 中检测到键盘快捷键操作，可能尝试复制试题。
+                </div>
+                <div class="alert-footer">
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看详情</button>
+                    <button class="btn btn-primary">发送警告</button>
+                    <button class="btn btn-danger">强制交卷</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span>在线考生</span>
+            <div class="action-btns">
+              <button class="btn btn-secondary">
+                <span class="btn-icon">🔄</span> 刷新
+              </button>
+              <button class="btn btn-primary">
+                <span class="btn-icon">📊</span> 导出名单
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <input type="text" class="search-input" placeholder="搜索考生姓名、学号...">
+              <button class="btn btn-primary search-btn">搜索</button>
+            </div>
+            
+            <div class="tabs">
+              <div class="tab active">全部考生</div>
+              <div class="tab">Java初级工程师认证</div>
+              <div class="tab">Web前端开发技能认证</div>
+              <div class="tab">数据库管理员基础认证</div>
+            </div>
+            
+            <div class="tab-content">
+              <div class="student-list">
+                <div class="student-item">
+                  <div class="student-avatar">李</div>
+                  <div class="student-info">
+                    <div class="student-name">李明</div>
+                    <div class="student-id">学号: S20230102 | 考试: Java初级工程师认证</div>
+                  </div>
+                  <div class="student-status">
+                    <span class="badge badge-warning">异常警报</span>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看</button>
+                    <button class="btn btn-primary">监控</button>
+                    <button class="btn btn-danger">强制交卷</button>
+                  </div>
+                </div>
+                
+                <div class="student-item">
+                  <div class="student-avatar">张</div>
+                  <div class="student-info">
+                    <div class="student-name">张华</div>
+                    <div class="student-id">学号: S20230205 | 考试: Web前端开发技能认证</div>
+                  </div>
+                  <div class="student-status">
+                    <span class="badge badge-warning">异常警报</span>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看</button>
+                    <button class="btn btn-primary">监控</button>
+                    <button class="btn btn-danger">强制交卷</button>
+                  </div>
+                </div>
+                
+                <div class="student-item">
+                  <div class="student-avatar">王</div>
+                  <div class="student-info">
+                    <div class="student-name">王芳</div>
+                    <div class="student-id">学号: S20230308 | 考试: 数据库管理员基础认证</div>
+                  </div>
+                  <div class="student-status">
+                    <span class="badge badge-warning">异常警报</span>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看</button>
+                    <button class="btn btn-primary">监控</button>
+                    <button class="btn btn-danger">强制交卷</button>
+                  </div>
+                </div>
+                
+                <div class="student-item">
+                  <div class="student-avatar">赵</div>
+                  <div class="student-info">
+                    <div class="student-name">赵强</div>
+                    <div class="student-id">学号: S20230401 | 考试: Java初级工程师认证</div>
+                  </div>
+                  <div class="student-status">
+                    <span class="badge badge-success">正常</span>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看</button>
+                    <button class="btn btn-primary">监控</button>
+                  </div>
+                </div>
+                
+                <div class="student-item">
+                  <div class="student-avatar">陈</div>
+                  <div class="student-info">
+                    <div class="student-name">陈静</div>
+                    <div class="student-id">学号: S20230512 | 考试: Web前端开发技能认证</div>
+                  </div>
+                  <div class="student-status">
+                    <span class="badge badge-success">正常</span>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn btn-secondary">查看</button>
+                    <button class="btn btn-primary">监控</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="pagination">
+                <div class="page-btn">«</div>
+                <div class="page-btn active">1</div>
+                <div class="page-btn">2</div>
+                <div class="page-btn">3</div>
+                <div class="page-btn">»</div>
+                <div class="page-info">共 128 条记录</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

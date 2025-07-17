@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 题库管理模块</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .module-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #304156;
+      color: #fff;
+      padding: 20px 0;
+      transition: all 0.3s;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #435169;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: #a7b7d0;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:hover {
+      background-color: #263445;
+    }
+    .menu-item.active {
+      background-color: #1890ff;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .menu-title {
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-sidebar {
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: #ccc;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    .user-name {
+      font-size: 14px;
+    }
+    .page-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #1890ff;
+      color: #1890ff;
+    }
+    .tab-content {
+      padding: 20px 0;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .table th {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #40a9ff;
+    }
+    .btn-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #ff7875;
+    }
+    .btn-secondary {
+      background-color: #f0f2f5;
+      color: #606266;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e7ed;
+    }
+    .btn-icon {
+      margin-right: 5px;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .badge-success {
+      background-color: #52c41a;
+      color: #fff;
+    }
+    .badge-warning {
+      background-color: #faad14;
+      color: #fff;
+    }
+    .badge-danger {
+      background-color: #ff4d4f;
+      color: #fff;
+    }
+    .badge-info {
+      background-color: #1890ff;
+      color: #fff;
+    }
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: all 0.3s;
+    }
+    .page-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn.active {
+      background-color: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .page-info {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-input:focus {
+      border-color: #1890ff;
+    }
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .question-preview {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      border-left: 3px solid #1890ff;
+    }
+    .question-type {
+      font-size: 12px;
+      color: #606266;
+      margin-bottom: 5px;
+    }
+    .question-content {
+      margin-bottom: 10px;
+    }
+    .question-options {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+    .question-option {
+      margin-bottom: 5px;
+    }
+    .question-answer {
+      color: #52c41a;
+      font-weight: bold;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+    }
+    .filter-label {
+      margin-right: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .filter-select {
+      padding: 6px 10px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">题库管理模块</div>
+        <div class="sidebar-subtitle">Question Bank Management</div>
+      </div>
+      <ul class="menu">
+        <li class="menu-item active">
+          <span class="menu-icon">📝</span>
+          <span class="menu-title">试题列表</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📋</span>
+          <span class="menu-title">题库分类</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">➕</span>
+          <span class="menu-title">添加试题</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">✅</span>
+          <span class="menu-title">试题审核</span>
+        </li>
+        <li class="menu-item">
+          <span class="menu-icon">📊</span>
+          <span class="menu-title">试题统计</span>
+        </li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <div class="toggle-sidebar">☰</div>
+          <div class="breadcrumb">
+            <span class="breadcrumb-item"><a href="../system-entry.html">首页</a></span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">题库管理</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">试题列表</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div class="user-name">管理员</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="window.location.href='../system-entry.html'">
+            <span class="btn-icon">🏠</span> 返回首页
+          </button>
+        </div>
+        <div class="page-title">试题列表</div>
+        <div class="card">
+          <div class="card-header">
+            <span>试题管理</span>
+            <button class="btn btn-primary">
+              <span class="btn-icon">+</span> 添加试题
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="filter-group">
+              <div class="filter-item">
+                <span class="filter-label">题型：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="single">单选题</option>
+                  <option value="multiple">多选题</option>
+                  <option value="judge">判断题</option>
+                  <option value="fill">填空题</option>
+                  <option value="essay">问答题</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">难度：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="easy">简单</option>
+                  <option value="medium">中等</option>
+                  <option value="hard">困难</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">分类：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="java">Java编程</option>
+                  <option value="web">Web前端</option>
+                  <option value="database">数据库</option>
+                  <option value="network">网络技术</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <span class="filter-label">状态：</span>
+                <select class="filter-select">
+                  <option value="">全部</option>
+                  <option value="approved">已审核</option>
+                  <option value="pending">待审核</option>
+                  <option value="rejected">已拒绝</option>
+                </select>
+              </div>
+            </div>
+            <div class="search-bar">
+              <input type="text" class="search-input" placeholder="搜索试题内容、关键词...">
+              <button class="btn btn-primary search-btn">搜索</button>
+            </div>
+            <div class="tabs">
+              <div class="tab active">全部试题</div>
+              <div class="tab">单选题</div>
+              <div class="tab">多选题</div>
+              <div class="tab">判断题</div>
+              <div class="tab">填空题</div>
+              <div class="tab">问答题</div>
+            </div>
+            <div class="tab-content">
+              <div class="question-preview">
+                <div class="question-type">单选题 | 难度：中等 | 分类：Java编程 | <span class="badge badge-success">已审核</span></div>
+                <div class="question-content">1. 在Java中，以下哪个关键字用于继承一个类？</div>
+                <div class="question-options">
+                  <div class="question-option">A. extends</div>
+                  <div class="question-option">B. implements</div>
+                  <div class="question-option">C. inherits</div>
+                  <div class="question-option">D. using</div>
+                </div>
+                <div class="question-answer">正确答案：A</div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="question-preview">
+                <div class="question-type">多选题 | 难度：困难 | 分类：Web前端 | <span class="badge badge-success">已审核</span></div>
+                <div class="question-content">2. 以下哪些是JavaScript的数据类型？</div>
+                <div class="question-options">
+                  <div class="question-option">A. String</div>
+                  <div class="question-option">B. Number</div>
+                  <div class="question-option">C. Boolean</div>
+                  <div class="question-option">D. Character</div>
+                  <div class="question-option">E. Integer</div>
+                </div>
+                <div class="question-answer">正确答案：A, B, C</div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="question-preview">
+                <div class="question-type">判断题 | 难度：简单 | 分类：数据库 | <span class="badge badge-warning">待审核</span></div>
+                <div class="question-content">3. SQL中的JOIN操作用于连接两个或多个表的行。</div>
+                <div class="question-answer">正确答案：正确</div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-primary">审核</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="question-preview">
+                <div class="question-type">填空题 | 难度：中等 | 分类：网络技术 | <span class="badge badge-success">已审核</span></div>
+                <div class="question-content">4. HTTP协议中，状态码200表示_____。</div>
+                <div class="question-answer">正确答案：请求成功</div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="question-preview">
+                <div class="question-type">问答题 | 难度：困难 | 分类：Java编程 | <span class="badge badge-danger">已拒绝</span></div>
+                <div class="question-content">5. 请简述Java中的多线程实现方式及其优缺点。</div>
+                <div class="question-answer">参考答案：Java中实现多线程主要有两种方式：继承Thread类和实现Runnable接口。...</div>
+                <div class="action-btns">
+                  <button class="btn btn-secondary">编辑</button>
+                  <button class="btn btn-primary">重新提交</button>
+                  <button class="btn btn-danger">删除</button>
+                </div>
+              </div>
+              <div class="pagination">
+                <div class="page-btn">«</div>
+                <div class="page-btn active">1</div>
+                <div class="page-btn">2</div>
+                <div class="page-btn">3</div>
+                <div class="page-btn">»</div>
+                <div class="page-info">共 125 条记录</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 侧边栏切换
+    document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
+
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 菜单项切换
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

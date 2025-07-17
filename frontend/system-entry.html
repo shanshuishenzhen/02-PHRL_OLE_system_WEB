@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 系统入口</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #303133;
+    }
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #304156;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 10px 0 0;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+    .card {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #303133;
+      border-bottom: 1px solid #EBEEF5;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .card-title:before {
+      content: '🔹';
+      margin-right: 8px;
+    }
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .module-item {
+      background-color: #f5f7fa;
+      border-radius: 5px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .module-item:hover {
+      background-color: #ecf5ff;
+      transform: translateY(-5px);
+    }
+    .module-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .module-icon.large {
+      font-size: 48px;
+      margin-right: 20px;
+    }
+    .module-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #303133;
+    }
+    .module-description {
+      font-size: 12px;
+      color: #909399;
+      margin-bottom: 10px;
+    }
+    .module-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: #F56C6C;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 0 0 0 5px;
+    }
+    .module-badge.green {
+      background-color: #67C23A;
+    }
+    .module-badge.blue {
+      background-color: #409EFF;
+    }
+    .module-badge.orange {
+      background-color: #E6A23C;
+    }
+    .module-summary {
+      display: flex;
+      background-color: #f5f7fa;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+    .module-summary:hover {
+      background-color: #ecf5ff;
+    }
+    .module-info {
+      flex: 1;
+    }
+    .module-stats {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    .stat-item {
+      margin-right: 30px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #409EFF;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #909399;
+    }
+    .module-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #409EFF;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background-color: #66b1ff;
+    }
+    .btn-secondary {
+      background-color: #909399;
+    }
+    .btn-secondary:hover {
+      background-color: #a6a9ad;
+    }
+    .btn-success {
+      background-color: #67C23A;
+    }
+    .btn-success:hover {
+      background-color: #85ce61;
+    }
+    .btn-warning {
+      background-color: #E6A23C;
+    }
+    .btn-warning:hover {
+      background-color: #ebb563;
+    }
+    .btn-danger {
+      background-color: #F56C6C;
+    }
+    .btn-danger:hover {
+      background-color: #f78989;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #909399;
+      font-size: 14px;
+      padding: 20px 0;
+      border-top: 1px solid #EBEEF5;
+    }
+    .footer a {
+      color: #409EFF;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .system-status {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .status-item {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      flex: 1;
+      min-width: 200px;
+      margin: 0 10px 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    .status-icon {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+    .status-info {
+      flex: 1;
+    }
+    .status-title {
+      font-size: 14px;
+      color: #909399;
+      margin-bottom: 5px;
+    }
+    .status-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #303133;
+    }
+    .status-value.green {
+      color: #67C23A;
+    }
+    .status-value.red {
+      color: #F56C6C;
+    }
+    .status-value.orange {
+      color: #E6A23C;
+    }
+    .status-value.blue {
+      color: #409EFF;
+    }
+    .debug-tools {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .debug-tools a {
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+    .role-login {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .role-card {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      flex: 1;
+      min-width: 250px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .role-card:hover {
+      transform: translateY(-5px);
+    }
+    .role-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    .role-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #303133;
+    }
+    .role-description {
+      font-size: 14px;
+      color: #909399;
+      margin-bottom: 15px;
+    }
+    .hidden {
+      display: none;
+    }
+    #debugPanel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #304156;
+      color: white;
+      padding: 15px;
+      z-index: 1000;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+    #debugPanel.active {
+      transform: translateY(0);
+    }
+    .debug-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .debug-panel-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .debug-panel-close {
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .debug-panel-content {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .debug-panel-item {
+      padding: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 14px;
+    }
+    .debug-panel-item:last-child {
+      border-bottom: none;
+    }
+    .debug-panel-item.error {
+      color: #F56C6C;
+    }
+    .debug-panel-item.warning {
+      color: #E6A23C;
+    }
+    .debug-panel-item.success {
+      color: #67C23A;
+    }
+    .debug-panel-item.info {
+      color: #909399;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1>职业技能等级认证考试系统</h1>
+      <p>全功能模块调试入口</p>
+    </div>
+
+    <!-- 系统状态 -->
+    <div class="system-status">
+      <div class="status-item">
+        <div class="status-icon">🖥️</div>
+        <div class="status-info">
+          <div class="status-title">后端服务</div>
+          <div class="status-value" id="backendStatus">检查中...</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-icon">🔄</div>
+        <div class="status-info">
+          <div class="status-title">数据库连接</div>
+          <div class="status-value" id="dbStatus">检查中...</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-icon">📊</div>
+        <div class="status-info">
+          <div class="status-title">活跃考试</div>
+          <div class="status-value" id="activeExams">检查中...</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-icon">👥</div>
+        <div class="status-info">
+          <div class="status-title">在线用户</div>
+          <div class="status-value" id="onlineUsers">检查中...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 调试工具 -->
+    <div class="card">
+      <div class="card-title">调试工具</div>
+      <div class="debug-tools">
+        <a href="debug-dashboard.html" class="btn">调试面板</a>
+        <a href="api-tester.html" class="btn btn-secondary">API测试工具</a>
+        <a href="/admin/" class="btn btn-warning">Django管理后台</a>
+        <a href="/api/docs/" class="btn btn-success">API文档</a>
+        <a href="#" class="btn btn-danger" onclick="toggleDebugPanel()">调试控制台</a>
+      </div>
+    </div>
+
+    <!-- 角色登录 -->
+    <div class="role-login">
+      <div class="role-card">
+        <div class="role-icon">👨‍🎓</div>
+        <div class="role-title">考生入口</div>
+        <div class="role-description">参加考试、查看成绩、获取证书</div>
+        <a href="quick-login.html?role=student" class="btn">快速登录</a>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">👩‍🏫</div>
+        <div class="role-title">考评员入口</div>
+        <div class="role-description">管理试题、组织考试、阅卷评分</div>
+        <a href="quick-login.html?role=teacher" class="btn">快速登录</a>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">👨‍💼</div>
+        <div class="role-title">管理员入口</div>
+        <div class="role-description">系统管理、数据分析、用户管理</div>
+        <a href="quick-login.html?role=admin" class="btn">快速登录</a>
+      </div>
+    </div>
+
+    <!-- 用户管理模块 -->
+    <div class="card">
+      <div class="card-title">用户管理模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">👥</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="totalUsers">--</div>
+              <div class="stat-label">总用户数</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="activeUsers">--</div>
+              <div class="stat-label">活跃用户</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="newUsers">--</div>
+              <div class="stat-label">新增用户</div>
+            </div>
+          </div>
+          <div class="module-description">
+            用户管理模块提供用户账号管理、角色权限分配、考生信息管理等功能。管理员可以进行用户增删改查、权限分配；教师可以管理考生信息；考生可以修改个人信息。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/user-management.html" class="btn">进入模块</a>
+        <a href="admin-demo.html#user-management" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 题库管理模块 -->
+    <div class="card">
+      <div class="card-title">题库管理模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">📚</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="totalQuestions">--</div>
+              <div class="stat-label">试题总数</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="questionCategories">--</div>
+              <div class="stat-label">题库分类</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="pendingReview">--</div>
+              <div class="stat-label">待审核</div>
+            </div>
+          </div>
+          <div class="module-description">
+            题库管理模块提供试题的创建、编辑、分类、导入导出、审核等功能。管理员可以管理题库分类、导入导出试题、审核试题；教师可以编辑和管理试题。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/question-bank.html" class="btn">进入模块</a>
+        <a href="admin-demo.html#question-bank" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 试卷管理模块 -->
+    <div class="card">
+      <div class="card-title">试卷管理模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">📝</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="totalPapers">--</div>
+              <div class="stat-label">试卷总数</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="paperTemplates">--</div>
+              <div class="stat-label">试卷模板</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="scheduledExams">--</div>
+              <div class="stat-label">已排考试</div>
+            </div>
+          </div>
+          <div class="module-description">
+            试卷管理模块提供试卷的创建、编辑、模板管理、发布和考试计划安排等功能。教师可以创建和编辑试卷、安排考试计划；管理员可以管理试卷模板、发布试卷。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/paper-management.html" class="btn">进入模块</a>
+        <a href="teacher-demo.html#paper-management" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 考试监控模块 -->
+    <div class="card">
+      <div class="card-title">考试监控模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">👁️</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="activeExams">--</div>
+              <div class="stat-label">进行中考试</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="activeStudents">--</div>
+              <div class="stat-label">在线考生</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="alertCount">--</div>
+              <div class="stat-label">异常警报</div>
+            </div>
+          </div>
+          <div class="module-description">
+            考试监控模块提供实时监控考场情况、查看考试数据统计、检测作弊行为和管理考场等功能。管理员可以进行实时监控、作弊检测和考场管理；教师可以查看考试数据和进度。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/exam-monitoring.html" class="btn">进入模块</a>
+        <a href="admin-demo.html#monitoring" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 考生考试模块 -->
+    <div class="card">
+      <div class="card-title">考生考试模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">📝</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="upcomingExams">--</div>
+              <div class="stat-label">即将考试</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="availableExams">--</div>
+              <div class="stat-label">可参加考试</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="completedExams">--</div>
+              <div class="stat-label">已完成考试</div>
+            </div>
+          </div>
+          <div class="module-description">
+            考生考试模块提供考生查看即将进行的考试、进入考试、使用考试界面答题以及查看历史考试记录等功能。考生可以通过此模块完成整个考试流程。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/student-exam.html" class="btn">进入模块</a>
+        <a href="student-demo.html#upcoming-exams" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 成绩管理模块 -->
+    <div class="card">
+      <div class="card-title">成绩管理模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">📊</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="pendingMarking">--</div>
+              <div class="stat-label">待批阅</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="completedMarking">--</div>
+              <div class="stat-label">已批阅</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="issuedCertificates">--</div>
+              <div class="stat-label">已发证书</div>
+            </div>
+          </div>
+          <div class="module-description">
+            成绩管理模块提供试卷批阅、成绩管理与分析、考生成绩查询以及证书管理等功能。教师可以批阅试卷；管理员可以管理成绩和证书；考生可以查询个人成绩。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/score-management.html" class="btn">进入模块</a>
+        <a href="teacher-demo.html#marking" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 阅卷中心模块 -->
+    <div class="card">
+      <div class="card-title">阅卷中心模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">✏️</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="pendingSubjective">--</div>
+              <div class="stat-label">待批主观题</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="autoMarkedObjective">--</div>
+              <div class="stat-label">已批客观题</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="markingProgress">--</div>
+              <div class="stat-label">批阅进度</div>
+            </div>
+          </div>
+          <div class="module-description">
+            阅卷中心模块提供人工阅卷和自动阅卷功能。教师可以进行主观题的人工批阅；管理员可以设置和监控客观题的自动批阅过程。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/marking-center.html" class="btn">进入模块</a>
+        <a href="teacher-demo.html#marking-center" class="btn btn-secondary">快速访问</a>
+      </div>
+
+      </div>
+    </div>
+
+    <!-- 日志审计模块 -->
+    <div class="card">
+      <div class="card-title">日志审计模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">📝</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="systemLogCount">--</div>
+              <div class="stat-label">系统日志</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="userLogCount">--</div>
+              <div class="stat-label">用户日志</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="securityAlerts">--</div>
+              <div class="stat-label">安全警报</div>
+            </div>
+          </div>
+          <div class="module-description">
+            日志审计模块提供系统日志、用户操作记录、安全事件和系统性能监控等功能。管理员可以通过此模块全面监控系统运行状态和用户行为。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/log-audit.html" class="btn">进入模块</a>
+        <a href="admin-demo.html#log-audit" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 数据分析模块 -->
+    <div class="card">
+      <div class="card-title">数据分析模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">📊</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="reportCount">--</div>
+              <div class="stat-label">分析报告</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="datasetCount">--</div>
+              <div class="stat-label">数据集</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="chartCount">--</div>
+              <div class="stat-label">统计图表</div>
+            </div>
+          </div>
+          <div class="module-description">
+            数据分析模块提供考试数据的统计、分析和可视化功能。管理员可以进行全面的数据分析；教师可以分析学生成绩和考试情况，生成统计报告和图表。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/data-analysis.html" class="btn">进入模块</a>
+        <a href="admin-demo.html#data-analysis" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- API网关模块 -->
+    <div class="card">
+      <div class="card-title">API网关模块</div>
+      <div class="module-summary">
+        <div class="module-icon large">🔌</div>
+        <div class="module-info">
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="apiCount">--</div>
+              <div class="stat-label">API接口</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="apiCallsToday">--</div>
+              <div class="stat-label">今日调用</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="apiStatus">--</div>
+              <div class="stat-label">服务状态</div>
+            </div>
+          </div>
+          <div class="module-description">
+            API网关模块提供API接口管理、认证授权、流量监控和测试功能。管理员可以配置API路由、管理密钥、监控API性能并进行接口测试。
+          </div>
+        </div>
+      </div>
+      <div class="module-actions">
+        <a href="modules/api-gateway.html" class="btn">进入模块</a>
+        <a href="api-tester.html" class="btn btn-secondary">快速访问</a>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>职业技能等级认证考试系统 &copy; 2023 版权所有</p>
+      <p>技术支持：<a href="mailto:support@example.com">support@example.com</a></p>
+    </div>
+  </div>
+
+  <!-- 调试面板 -->
+  <div id="debugPanel">
+    <div class="debug-panel-header">
+      <div class="debug-panel-title">调试控制台</div>
+      <div class="debug-panel-close" onclick="toggleDebugPanel()">×</div>
+    </div>
+    <div class="debug-panel-content" id="debugPanelContent">
+      <div class="debug-panel-item info">系统初始化中...</div>
+    </div>
+  </div>
+
+  <script>
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检查系统状态
+      checkSystemStatus();
+      
+      // 添加键盘快捷键
+      document.addEventListener('keydown', function(e) {
+        // Alt+D 打开调试面板
+        if (e.altKey && e.key === 'd') {
+          toggleDebugPanel();
+        }
+      });
+    });
+
+    // 检查系统状态
+    function checkSystemStatus() {
+      // 模拟检查后端服务状态
+      setTimeout(function() {
+        document.getElementById('backendStatus').textContent = '正常运行';
+        document.getElementById('backendStatus').className = 'status-value green';
+        logDebug('后端服务检查完成：正常运行', 'success');
+      }, 500);
+
+      // 模拟检查数据库连接状态
+      setTimeout(function() {
+        document.getElementById('dbStatus').textContent = '已连接';
+        document.getElementById('dbStatus').className = 'status-value green';
+        logDebug('数据库连接检查完成：已连接', 'success');
+      }, 800);
+
+      // 模拟检查活跃考试数量
+      setTimeout(function() {
+        document.getElementById('activeExams').textContent = '3';
+        document.getElementById('activeExams').className = 'status-value blue';
+        logDebug('活跃考试检查完成：3个考试正在进行', 'info');
+      }, 1000);
+
+      // 模拟检查在线用户数量
+      setTimeout(function() {
+        document.getElementById('onlineUsers').textContent = '42';
+        document.getElementById('onlineUsers').className = 'status-value blue';
+        logDebug('在线用户检查完成：42名用户在线', 'info');
+      }, 1200);
+    }
+
+    // 导航到指定页面
+    function navigateTo(url) {
+      logDebug(`导航到: ${url}`, 'info');
+      window.location.href = url;
+    }
+
+    // 切换调试面板显示/隐藏
+    function toggleDebugPanel() {
+      const panel = document.getElementById('debugPanel');
+      panel.classList.toggle('active');
+      if (panel.classList.contains('active')) {
+        logDebug('调试面板已打开', 'info');
+      }
+    }
+
+    // 记录调试信息
+    function logDebug(message, type = 'info') {
+      const content = document.getElementById('debugPanelContent');
+      const item = document.createElement('div');
+      item.className = `debug-panel-item ${type}`;
+      item.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      content.appendChild(item);
+      content.scrollTop = content.scrollHeight;
+    }
+  </script>
+</body>
+</html>

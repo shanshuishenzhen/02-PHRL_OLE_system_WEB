@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - API测试工具</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #409EFF;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .api-tester {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px;
+    }
+    .module-list {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      max-height: 700px;
+      overflow-y: auto;
+    }
+    .module-group {
+      margin-bottom: 20px;
+    }
+    .module-group h3 {
+      color: #409EFF;
+      margin-top: 0;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #EBEEF5;
+      padding-bottom: 5px;
+    }
+    .endpoint-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .endpoint-item {
+      padding: 8px 5px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+    }
+    .endpoint-item:hover {
+      background-color: #ecf5ff;
+    }
+    .endpoint-item.active {
+      background-color: #ecf5ff;
+      color: #409EFF;
+      font-weight: bold;
+    }
+    .http-method {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-right: 8px;
+      min-width: 40px;
+      text-align: center;
+    }
+    .method-get {
+      background-color: #67C23A;
+      color: white;
+    }
+    .method-post {
+      background-color: #E6A23C;
+      color: white;
+    }
+    .method-put {
+      background-color: #409EFF;
+      color: white;
+    }
+    .method-delete {
+      background-color: #F56C6C;
+      color: white;
+    }
+    .method-patch {
+      background-color: #909399;
+      color: white;
+    }
+    .tester-panel {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    .endpoint-url {
+      display: flex;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+    .endpoint-url input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .endpoint-url button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background-color: #409EFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .endpoint-url button:hover {
+      background-color: #66b1ff;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #DCDFE6;
+      margin-bottom: 15px;
+    }
+    .tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .tab.active {
+      border-bottom: 2px solid #409EFF;
+      color: #409EFF;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .form-group textarea {
+      min-height: 150px;
+      font-family: monospace;
+    }
+    .response-area {
+      margin-top: 20px;
+    }
+    .response-area h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #409EFF;
+    }
+    .response-status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .status-code {
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .status-success {
+      background-color: #67C23A;
+      color: white;
+    }
+    .status-error {
+      background-color: #F56C6C;
+      color: white;
+    }
+    .status-info {
+      background-color: #909399;
+      color: white;
+    }
+    .response-body {
+      background-color: #f5f7fa;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .auth-token {
+      background-color: #f0f9eb;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .auth-token input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+      font-family: monospace;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #909399;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>职业技能等级认证考试系统 - API测试工具</h1>
+    </header>
+
+    <div class="auth-token">
+      <label for="auth-token-input">认证令牌 (JWT Token):</label>
+      <input type="text" id="auth-token-input" placeholder="在此处粘贴您的JWT令牌...">
+    </div>
+
+    <div class="api-tester">
+      <div class="module-list">
+        <!-- 用户管理模块 -->
+        <div class="module-group">
+          <h3>用户管理</h3>
+          <ul class="endpoint-list">
+            <li class="endpoint-item" data-url="/api/users/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取用户列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/{id}/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取用户详情</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>创建用户</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/{id}/" data-method="PUT">
+              <span class="http-method method-put">PUT</span>
+              <span>更新用户</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/auth/login/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>用户登录</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/auth/refresh/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>刷新令牌</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/auth/logout/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>用户登出</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/users/current/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>当前用户信息</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 题库管理模块 -->
+        <div class="module-group">
+          <h3>题库管理</h3>
+          <ul class="endpoint-list">
+            <li class="endpoint-item" data-url="/api/questions/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取试题列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/questions/{id}/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取试题详情</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/questions/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>创建试题</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/questions/categories/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取分类列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/questions/knowledge-points/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取知识点列表</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 试卷管理模块 -->
+        <div class="module-group">
+          <h3>试卷管理</h3>
+          <ul class="endpoint-list">
+            <li class="endpoint-item" data-url="/api/papers/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取试卷列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/papers/{id}/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取试卷详情</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/papers/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>创建试卷</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/papers/templates/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取试卷模板</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/papers/generate/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>生成试卷</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 考试监控模块 -->
+        <div class="module-group">
+          <h3>考试监控</h3>
+          <ul class="endpoint-list">
+            <li class="endpoint-item" data-url="/api/exams/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取考试列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/exams/{id}/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取考试详情</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/exams/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>创建考试</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/exams/rooms/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取考场列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/exams/actions/start/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>开始考试</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/exams/actions/end/" data-method="POST">
+              <span class="http-method method-post">POST</span>
+              <span>结束考试</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 成绩管理模块 -->
+        <div class="module-group">
+          <h3>成绩管理</h3>
+          <ul class="endpoint-list">
+            <li class="endpoint-item" data-url="/api/scores/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取成绩列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/scores/{id}/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取成绩详情</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/scores/sheets/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取答卷列表</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/scores/statistics/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取成绩统计</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/scores/export/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>导出成绩</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 其他模块 -->
+        <div class="module-group">
+          <h3>其他模块</h3>
+          <ul class="endpoint-list">
+            <li class="endpoint-item" data-url="/api/marking/tasks/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取阅卷任务</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/logs/operations/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取操作日志</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/analysis/departments/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取院系分析</span>
+            </li>
+            <li class="endpoint-item" data-url="/api/gateway/status/" data-method="GET">
+              <span class="http-method method-get">GET</span>
+              <span>获取服务状态</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tester-panel">
+        <div class="endpoint-url">
+          <input type="text" id="url-input" placeholder="API端点URL...">
+          <button id="send-request">发送请求</button>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="params">查询参数</div>
+          <div class="tab" data-tab="headers">请求头</div>
+          <div class="tab" data-tab="body">请求体</div>
+        </div>
+
+        <div class="tab-content active" id="params-tab">
+          <div class="form-group">
+            <label for="params-input">查询参数 (key=value, 每行一个):</label>
+            <textarea id="params-input" placeholder="page=1&#10;limit=10"></textarea>
+          </div>
+        </div>
+
+        <div class="tab-content" id="headers-tab">
+          <div class="form-group">
+            <label for="headers-input">请求头 (key: value, 每行一个):</label>
+            <textarea id="headers-input" placeholder="Content-Type: application/json"></textarea>
+          </div>
+        </div>
+
+        <div class="tab-content" id="body-tab">
+          <div class="form-group">
+            <label for="body-input">请求体 (JSON):</label>
+            <textarea id="body-input" placeholder="{
+  "key": "value"
+}"></textarea>
+          </div>
+        </div>
+
+        <div class="response-area">
+          <h3>响应结果</h3>
+          <div class="response-status">
+            <span class="status-code status-info">等待请求...</span>
+            <span class="status-text">请选择一个API端点并发送请求</span>
+          </div>
+          <div class="response-body">// 响应内容将显示在这里</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>职业技能等级认证考试系统 &copy; 2023 - API测试工具</p>
+    </footer>
+  </div>
+
+  <script>
+    // 获取DOM元素
+    const endpointItems = document.querySelectorAll('.endpoint-item');
+    const urlInput = document.getElementById('url-input');
+    const sendRequestBtn = document.getElementById('send-request');
+    const paramsInput = document.getElementById('params-input');
+    const headersInput = document.getElementById('headers-input');
+    const bodyInput = document.getElementById('body-input');
+    const authTokenInput = document.getElementById('auth-token-input');
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const responseStatus = document.querySelector('.status-code');
+    const responseStatusText = document.querySelector('.status-text');
+    const responseBody = document.querySelector('.response-body');
+
+    // 基础URL
+    const baseUrl = window.location.origin; // 例如: http://localhost:8000
+
+    // 选择端点
+    endpointItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // 移除其他项的active类
+        endpointItems.forEach(i => i.classList.remove('active'));
+        // 添加当前项的active类
+        item.classList.add('active');
+
+        // 获取URL和方法
+        const url = item.getAttribute('data-url');
+        const method = item.getAttribute('data-method');
+
+        // 更新URL输入框
+        urlInput.value = url;
+
+        // 根据方法设置默认值
+        if (method === 'GET' || method === 'DELETE') {
+          // GET和DELETE通常不需要请求体
+          bodyInput.value = '';
+          // 切换到参数选项卡
+          switchTab('params');
+        } else {
+          // POST, PUT, PATCH通常需要请求体
+          bodyInput.value = '{\n  "key": "value"\n}';
+          // 切换到请求体选项卡
+          switchTab('body');
+        }
+
+        // 设置默认请求头
+        headersInput.value = 'Content-Type: application/json';
+      });
+    });
+
+    // 切换选项卡
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        switchTab(tabName);
+      });
+    });
+
+    function switchTab(tabName) {
+      // 移除所有选项卡的active类
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      // 添加当前选项卡的active类
+      document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+
+    // 发送请求
+    sendRequestBtn.addEventListener('click', async () => {
+      // 获取当前选中的端点
+      const activeEndpoint = document.querySelector('.endpoint-item.active');
+      if (!activeEndpoint) {
+        alert('请先选择一个API端点');
+        return;
+      }
+
+      // 获取请求信息
+      const method = activeEndpoint.getAttribute('data-method');
+      let url = urlInput.value;
+
+      // 检查URL是否包含占位符
+      if (url.includes('{id}')) {
+        const id = prompt('请输入ID值:');
+        if (!id) return;
+        url = url.replace('{id}', id);
+      }
+
+      // 构建完整URL
+      let fullUrl = `${baseUrl}${url}`;
+
+      // 处理查询参数
+      const params = paramsInput.value.trim();
+      if (params) {
+        const queryParams = params.split('\n')
+          .filter(param => param.trim())
+          .map(param => {
+            const [key, value] = param.split('=');
+            return `${encodeURIComponent(key.trim())}=${encodeURIComponent(value.trim())}`;
+          })
+          .join('&');
+
+        if (queryParams) {
+          fullUrl += `?${queryParams}`;
+        }
+      }
+
+      // 处理请求头
+      const headers = {};
+      headersInput.value.trim().split('\n')
+        .filter(header => header.trim())
+        .forEach(header => {
+          const [key, value] = header.split(':');
+          headers[key.trim()] = value.trim();
+        });
+
+      // 添加认证令牌
+      const authToken = authTokenInput.value.trim();
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+
+      // 处理请求体
+      let body = null;
+      if (method !== 'GET' && method !== 'DELETE') {
+        try {
+          body = JSON.parse(bodyInput.value.trim() || '{}');
+        } catch (error) {
+          alert('请求体JSON格式错误: ' + error.message);
+          return;
+        }
+      }
+
+      // 更新响应状态
+      responseStatus.className = 'status-code status-info';
+      responseStatus.textContent = '请求中...';
+      responseStatusText.textContent = '正在发送请求，请稍候...';
+      responseBody.textContent = '';
+
+      try {
+        // 发送请求
+        const response = await fetch(fullUrl, {
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
+        });
+
+        // 获取响应状态
+        const statusCode = response.status;
+        const statusText = response.statusText;
+
+        // 更新响应状态样式
+        if (statusCode >= 200 && statusCode < 300) {
+          responseStatus.className = 'status-code status-success';
+        } else if (statusCode >= 400) {
+          responseStatus.className = 'status-code status-error';
+        } else {
+          responseStatus.className = 'status-code status-info';
+        }
+
+        // 更新响应状态文本
+        responseStatus.textContent = statusCode;
+        responseStatusText.textContent = statusText;
+
+        // 获取响应内容
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          responseBody.textContent = JSON.stringify(data, null, 2);
+        } else {
+          const text = await response.text();
+          responseBody.textContent = text;
+        }
+      } catch (error) {
+        // 处理请求错误
+        responseStatus.className = 'status-code status-error';
+        responseStatus.textContent = 'ERROR';
+        responseStatusText.textContent = error.message;
+        responseBody.textContent = `请求失败: ${error.message}`;
+      }
+    });
+
+    // 初始化默认值
+    headersInput.value = 'Content-Type: application/json';
+  </script>
+</body>
+</html>

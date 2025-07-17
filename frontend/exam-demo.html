@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 考试界面</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #303133;
+    }
+    .exam-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .exam-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .exam-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #409EFF;
+    }
+    .exam-info {
+      display: flex;
+      align-items: center;
+    }
+    .exam-info-item {
+      margin-left: 20px;
+      font-size: 14px;
+      color: #606266;
+    }
+    .exam-timer {
+      background-color: #f56c6c;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .exam-content {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 20px;
+    }
+    .question-nav {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      height: fit-content;
+    }
+    .nav-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #303133;
+      border-bottom: 1px solid #EBEEF5;
+      padding-bottom: 10px;
+    }
+    .question-buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .question-button {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f7fa;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .question-button:hover {
+      border-color: #409EFF;
+      color: #409EFF;
+    }
+    .question-button.active {
+      background-color: #409EFF;
+      color: white;
+      border-color: #409EFF;
+    }
+    .question-button.answered {
+      background-color: #67C23A;
+      color: white;
+      border-color: #67C23A;
+    }
+    .question-button.marked {
+      background-color: #E6A23C;
+      color: white;
+      border-color: #E6A23C;
+    }
+    .question-type-section {
+      margin-bottom: 20px;
+    }
+    .question-panel {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .question-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: #409EFF;
+    }
+    .question-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .question-action-button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .mark-button {
+      background-color: #E6A23C;
+      color: white;
+    }
+    .mark-button:hover {
+      background-color: #ebb563;
+    }
+    .question-content {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .question-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px;
+      border: 1px solid #DCDFE6;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .option-item:hover {
+      border-color: #409EFF;
+      background-color: #ecf5ff;
+    }
+    .option-item.selected {
+      border-color: #409EFF;
+      background-color: #ecf5ff;
+    }
+    .option-prefix {
+      font-weight: bold;
+      margin-right: 10px;
+      color: #409EFF;
+    }
+    .option-content {
+      flex: 1;
+    }
+    .question-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    .nav-button {
+      padding: 10px 20px;
+      background-color: #409EFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .nav-button:hover {
+      background-color: #66b1ff;
+    }
+    .nav-button:disabled {
+      background-color: #a0cfff;
+      cursor: not-allowed;
+    }
+    .exam-footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .submit-button {
+      padding: 12px 30px;
+      background-color: #F56C6C;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .submit-button:hover {
+      background-color: #f78989;
+    }
+    .question-image {
+      max-width: 100%;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      border-radius: 5px;
+      padding: 30px;
+      width: 400px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #303133;
+    }
+    .modal-body {
+      margin-bottom: 20px;
+      color: #606266;
+      line-height: 1.6;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .modal-button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .modal-button.primary {
+      background-color: #409EFF;
+      color: white;
+    }
+    .modal-button.primary:hover {
+      background-color: #66b1ff;
+    }
+    .modal-button.danger {
+      background-color: #F56C6C;
+      color: white;
+    }
+    .modal-button.danger:hover {
+      background-color: #f78989;
+    }
+    .modal-button.cancel {
+      background-color: #909399;
+      color: white;
+    }
+    .modal-button.cancel:hover {
+      background-color: #a6a9ad;
+    }
+    .error-message {
+      background-color: #fef0f0;
+      color: #F56C6C;
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="exam-container">
+    <div class="error-message" id="error-message">网络连接中断，请检查网络连接。您的答案已保存在本地。</div>
+    
+    <div class="exam-header">
+      <div class="exam-title">职业技能等级认证考试 - Web前端开发（初级）</div>
+      <div class="exam-info">
+        <div class="exam-info-item">考生: 张三</div>
+        <div class="exam-info-item">考号: 20230001</div>
+        <div class="exam-info-item exam-timer" id="exam-timer">剩余时间: 01:59:59</div>
+      </div>
+    </div>
+
+    <div class="exam-content">
+      <div class="question-nav">
+        <div class="nav-title">单选题 (共20题)</div>
+        <div class="question-buttons" id="single-choice-buttons">
+          <!-- 单选题按钮将通过JavaScript动态生成 -->
+        </div>
+
+        <div class="nav-title" style="margin-top: 20px;">多选题 (共10题)</div>
+        <div class="question-buttons" id="multiple-choice-buttons">
+          <!-- 多选题按钮将通过JavaScript动态生成 -->
+        </div>
+
+        <div class="nav-title" style="margin-top: 20px;">判断题 (共10题)</div>
+        <div class="question-buttons" id="true-false-buttons">
+          <!-- 判断题按钮将通过JavaScript动态生成 -->
+        </div>
+
+        <div class="nav-title" style="margin-top: 20px;">简答题 (共5题)</div>
+        <div class="question-buttons" id="short-answer-buttons">
+          <!-- 简答题按钮将通过JavaScript动态生成 -->
+        </div>
+      </div>
+
+      <div class="question-panel" id="question-panel">
+        <!-- 当前题目内容将通过JavaScript动态生成 -->
+      </div>
+    </div>
+
+    <div class="exam-footer">
+      <button class="submit-button" id="submit-exam">交卷</button>
+    </div>
+  </div>
+
+  <!-- 确认交卷模态框 -->
+  <div class="modal" id="submit-modal">
+    <div class="modal-content">
+      <div class="modal-title">确认交卷</div>
+      <div class="modal-body">
+        <p>您确定要交卷吗？</p>
+        <p>已完成: <span id="completed-count">0</span>/<span id="total-count">45</span> 题</p>
+        <p>未完成: <span id="incomplete-count">45</span> 题</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button cancel" id="cancel-submit">取消</button>
+        <button class="modal-button danger" id="confirm-submit">确认交卷</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标记题目模态框 -->
+  <div class="modal" id="mark-modal">
+    <div class="modal-content">
+      <div class="modal-title">标记题目</div>
+      <div class="modal-body">
+        <p>您确定要标记此题目吗？</p>
+        <p>标记的题目将在导航栏中以黄色显示，方便您稍后再次查看。</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button cancel" id="cancel-mark">取消</button>
+        <button class="modal-button primary" id="confirm-mark">确认标记</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟考试数据
+    const examData = {
+      title: "职业技能等级认证考试 - Web前端开发（初级）",
+      duration: 7200, // 秒
+      questions: [
+        // 单选题
+        ...Array(20).fill().map((_, i) => ({
+          id: i + 1,
+          type: "single_choice",
+          content: `单选题${i + 1}: 以下哪个不是JavaScript的基本数据类型？`,
+          options: [
+            { id: "A", content: "String" },
+            { id: "B", content: "Number" },
+            { id: "C", content: "Array" },
+            { id: "D", content: "Boolean" }
+          ],
+          answer: null,
+          marked: false
+        })),
+        // 多选题
+        ...Array(10).fill().map((_, i) => ({
+          id: i + 21,
+          type: "multiple_choice",
+          content: `多选题${i + 1}: 以下哪些是HTML5新增的标签？`,
+          options: [
+            { id: "A", content: "<header>" },
+            { id: "B", content: "<section>" },
+            { id: "C", content: "<article>" },
+            { id: "D", content: "<div>" }
+          ],
+          answer: [],
+          marked: false
+        })),
+        // 判断题
+        ...Array(10).fill().map((_, i) => ({
+          id: i + 31,
+          type: "true_false",
+          content: `判断题${i + 1}: CSS中，margin属性可以设置负值。`,
+          options: [
+            { id: "A", content: "正确" },
+            { id: "B", content: "错误" }
+          ],
+          answer: null,
+          marked: false
+        })),
+        // 简答题
+        ...Array(5).fill().map((_, i) => ({
+          id: i + 41,
+          type: "short_answer",
+          content: `简答题${i + 1}: 请简述CSS盒模型的概念及其组成部分。`,
+          answer: "",
+          marked: false
+        }))
+      ]
+    };
+
+    // 当前题目索引
+    let currentQuestionIndex = 0;
+
+    // DOM元素
+    const questionPanel = document.getElementById('question-panel');
+    const singleChoiceButtons = document.getElementById('single-choice-buttons');
+    const multipleChoiceButtons = document.getElementById('multiple-choice-buttons');
+    const trueFalseButtons = document.getElementById('true-false-buttons');
+    const shortAnswerButtons = document.getElementById('short-answer-buttons');
+    const examTimer = document.getElementById('exam-timer');
+    const submitExamButton = document.getElementById('submit-exam');
+    const submitModal = document.getElementById('submit-modal');
+    const cancelSubmitButton = document.getElementById('cancel-submit');
+    const confirmSubmitButton = document.getElementById('confirm-submit');
+    const completedCount = document.getElementById('completed-count');
+    const totalCount = document.getElementById('total-count');
+    const incompleteCount = document.getElementById('incomplete-count');
+    const markModal = document.getElementById('mark-modal');
+    const cancelMarkButton = document.getElementById('cancel-mark');
+    const confirmMarkButton = document.getElementById('confirm-mark');
+    const errorMessage = document.getElementById('error-message');
+
+    // 初始化考试界面
+    function initExam() {
+      // 初始化导航按钮
+      initNavigationButtons();
+      
+      // 显示第一题
+      showQuestion(0);
+      
+      // 初始化计时器
+      initTimer();
+      
+      // 初始化事件监听
+      initEventListeners();
+    }
+
+    // 初始化导航按钮
+    function initNavigationButtons() {
+      // 单选题按钮
+      for (let i = 0; i < 20; i++) {
+        const button = document.createElement('div');
+        button.className = 'question-button';
+        button.textContent = i + 1;
+        button.addEventListener('click', () => showQuestion(i));
+        singleChoiceButtons.appendChild(button);
+      }
+      
+      // 多选题按钮
+      for (let i = 0; i < 10; i++) {
+        const button = document.createElement('div');
+        button.className = 'question-button';
+        button.textContent = i + 1;
+        button.addEventListener('click', () => showQuestion(i + 20));
+        multipleChoiceButtons.appendChild(button);
+      }
+      
+      // 判断题按钮
+      for (let i = 0; i < 10; i++) {
+        const button = document.createElement('div');
+        button.className = 'question-button';
+        button.textContent = i + 1;
+        button.addEventListener('click', () => showQuestion(i + 30));
+        trueFalseButtons.appendChild(button);
+      }
+      
+      // 简答题按钮
+      for (let i = 0; i < 5; i++) {
+        const button = document.createElement('div');
+        button.className = 'question-button';
+        button.textContent = i + 1;
+        button.addEventListener('click', () => showQuestion(i + 40));
+        shortAnswerButtons.appendChild(button);
+      }
+      
+      // 设置第一题为活动状态
+      document.querySelector('.question-button').classList.add('active');
+    }
+
+    // 显示指定题目
+    function showQuestion(index) {
+      // 更新当前题目索引
+      currentQuestionIndex = index;
+      
+      // 更新导航按钮状态
+      updateNavigationButtons();
+      
+      // 获取当前题目
+      const question = examData.questions[index];
+      
+      // 清空题目面板
+      questionPanel.innerHTML = '';
+      
+      // 创建题目头部
+      const questionHeader = document.createElement('div');
+      questionHeader.className = 'question-header';
+      
+      // 题目编号
+      const questionNumber = document.createElement('div');
+      questionNumber.className = 'question-number';
+      
+      // 根据题目类型设置不同的标题
+      let questionTypeText = '';
+      if (question.type === 'single_choice') {
+        questionTypeText = '单选题';
+      } else if (question.type === 'multiple_choice') {
+        questionTypeText = '多选题';
+      } else if (question.type === 'true_false') {
+        questionTypeText = '判断题';
+      } else if (question.type === 'short_answer') {
+        questionTypeText = '简答题';
+      }
+      
+      questionNumber.textContent = `${questionTypeText} ${index + 1} / ${examData.questions.length}`;
+      questionHeader.appendChild(questionNumber);
+      
+      // 题目操作按钮
+      const questionActions = document.createElement('div');
+      questionActions.className = 'question-actions';
+      
+      // 标记按钮
+      const markButton = document.createElement('button');
+      markButton.className = 'question-action-button mark-button';
+      markButton.textContent = question.marked ? '取消标记' : '标记此题';
+      markButton.addEventListener('click', () => toggleMarkQuestion());
+      questionActions.appendChild(markButton);
+      
+      questionHeader.appendChild(questionActions);
+      questionPanel.appendChild(questionHeader);
+      
+      // 题目内容
+      const questionContent = document.createElement('div');
+      questionContent.className = 'question-content';
+      questionContent.textContent = question.content;
+      questionPanel.appendChild(questionContent);
+      
+      // 根据题目类型显示不同的选项或答题区域
+      if (question.type === 'single_choice' || question.type === 'multiple_choice' || question.type === 'true_false') {
+        // 选择题选项
+        const questionOptions = document.createElement('div');
+        questionOptions.className = 'question-options';
+        
+        question.options.forEach(option => {
+          const optionItem = document.createElement('div');
+          optionItem.className = 'option-item';
+          
+          // 如果是单选题或判断题，检查是否已选择
+          if ((question.type === 'single_choice' || question.type === 'true_false') && question.answer === option.id) {
+            optionItem.classList.add('selected');
+          }
+          
+          // 如果是多选题，检查是否已选择
+          if (question.type === 'multiple_choice' && question.answer.includes(option.id)) {
+            optionItem.classList.add('selected');
+          }
+          
+          // 选项前缀
+          const optionPrefix = document.createElement('div');
+          optionPrefix.className = 'option-prefix';
+          optionPrefix.textContent = option.id + '.';
+          optionItem.appendChild(optionPrefix);
+          
+          // 选项内容
+          const optionContent = document.createElement('div');
+          optionContent.className = 'option-content';
+          optionContent.textContent = option.content;
+          optionItem.appendChild(optionContent);
+          
+          // 添加点击事件
+          optionItem.addEventListener('click', () => {
+            if (question.type === 'single_choice' || question.type === 'true_false') {
+              // 单选题或判断题
+              question.answer = option.id;
+              // 更新选项样式
+              questionOptions.querySelectorAll('.option-item').forEach(item => {
+                item.classList.remove('selected');
+              });
+              optionItem.classList.add('selected');
+            } else if (question.type === 'multiple_choice') {
+              // 多选题
+              if (question.answer.includes(option.id)) {
+                // 如果已选择，则取消选择
+                question.answer = question.answer.filter(id => id !== option.id);
+                optionItem.classList.remove('selected');
+              } else {
+                // 如果未选择，则添加选择
+                question.answer.push(option.id);
+                optionItem.classList.add('selected');
+              }
+            }
+            
+            // 更新导航按钮状态
+            updateNavigationButtons();
+          });
+          
+          questionOptions.appendChild(optionItem);
+        });
+        
+        questionPanel.appendChild(questionOptions);
+      } else if (question.type === 'short_answer') {
+        // 简答题答题区域
+        const answerArea = document.createElement('textarea');
+        answerArea.style.width = '100%';
+        answerArea.style.minHeight = '200px';
+        answerArea.style.padding = '10px';
+        answerArea.style.marginTop = '20px';
+        answerArea.style.border = '1px solid #DCDFE6';
+        answerArea.style.borderRadius = '4px';
+        answerArea.style.resize = 'vertical';
+        answerArea.style.fontFamily = 'inherit';
+        answerArea.style.fontSize = '14px';
+        answerArea.style.lineHeight = '1.6';
+        answerArea.placeholder = '请在此处输入您的答案...';
+        answerArea.value = question.answer;
+        
+        // 添加输入事件
+        answerArea.addEventListener('input', () => {
+          question.answer = answerArea.value;
+          // 更新导航按钮状态
+          updateNavigationButtons();
+        });
+        
+        questionPanel.appendChild(answerArea);
+      }
+      
+      // 题目导航按钮
+      const questionNavigation = document.createElement('div');
+      questionNavigation.className = 'question-navigation';
+      
+      // 上一题按钮
+      const prevButton = document.createElement('button');
+      prevButton.className = 'nav-button';
+      prevButton.textContent = '上一题';
+      prevButton.disabled = index === 0;
+      prevButton.addEventListener('click', () => {
+        if (index > 0) {
+          showQuestion(index - 1);
+        }
+      });
+      questionNavigation.appendChild(prevButton);
+      
+      // 下一题按钮
+      const nextButton = document.createElement('button');
+      nextButton.className = 'nav-button';
+      nextButton.textContent = index === examData.questions.length - 1 ? '完成' : '下一题';
+      nextButton.disabled = index === examData.questions.length - 1;
+      nextButton.addEventListener('click', () => {
+        if (index < examData.questions.length - 1) {
+          showQuestion(index + 1);
+        }
+      });
+      questionNavigation.appendChild(nextButton);
+      
+      questionPanel.appendChild(questionNavigation);
+    }
+
+    // 更新导航按钮状态
+    function updateNavigationButtons() {
+      // 移除所有按钮的活动状态
+      document.querySelectorAll('.question-button').forEach(button => {
+        button.classList.remove('active');
+        button.classList.remove('answered');
+        button.classList.remove('marked');
+      });
+      
+      // 更新按钮状态
+      examData.questions.forEach((question, index) => {
+        const buttonIndex = getButtonIndex(index);
+        const button = document.querySelectorAll('.question-button')[buttonIndex];
+        
+        // 设置当前题目为活动状态
+        if (index === currentQuestionIndex) {
+          button.classList.add('active');
+        }
+        
+        // 设置已回答题目的状态
+        if (isQuestionAnswered(question)) {
+          button.classList.add('answered');
+        }
+        
+        // 设置已标记题目的状态
+        if (question.marked) {
+          button.classList.add('marked');
+        }
+      });
+      
+      // 更新完成题目计数
+      updateCompletionStatus();
+    }
+
+    // 获取按钮索引
+    function getButtonIndex(questionIndex) {
+      if (questionIndex < 20) {
+        // 单选题
+        return questionIndex;
+      } else if (questionIndex < 30) {
+        // 多选题
+        return questionIndex - 20 + 20;
+      } else if (questionIndex < 40) {
+        // 判断题
+        return questionIndex - 30 + 30;
+      } else {
+        // 简答题
+        return questionIndex - 40 + 40;
+      }
+    }
+
+    // 检查题目是否已回答
+    function isQuestionAnswered(question) {
+      if (question.type === 'single_choice' || question.type === 'true_false') {
+        return question.answer !== null;
+      } else if (question.type === 'multiple_choice') {
+        return question.answer.length > 0;
+      } else if (question.type === 'short_answer') {
+        return question.answer.trim() !== '';
+      }
+      return false;
+    }
+
+    // 切换标记题目状态
+    function toggleMarkQuestion() {
+      const question = examData.questions[currentQuestionIndex];
+      
+      if (question.marked) {
+        // 如果已标记，则取消标记
+        question.marked = false;
+        showQuestion(currentQuestionIndex);
+      } else {
+        // 如果未标记，则显示确认对话框
+        markModal.style.display = 'flex';
+      }
+    }
+
+    // 确认标记题目
+    function confirmMarkQuestion() {
+      const question = examData.questions[currentQuestionIndex];
+      question.marked = true;
+      markModal.style.display = 'none';
+      showQuestion(currentQuestionIndex);
+    }
+
+    // 更新完成题目计数
+    function updateCompletionStatus() {
+      const total = examData.questions.length;
+      const completed = examData.questions.filter(question => isQuestionAnswered(question)).length;
+      const incomplete = total - completed;
+      
+      completedCount.textContent = completed;
+      totalCount.textContent = total;
+      incompleteCount.textContent = incomplete;
+    }
+
+    // 初始化计时器
+    function initTimer() {
+      let remainingTime = examData.duration; // 秒
+      
+      function updateTimer() {
+        const hours = Math.floor(remainingTime / 3600);
+        const minutes = Math.floor((remainingTime % 3600) / 60);
+        const seconds = remainingTime % 60;
+        
+        examTimer.textContent = `剩余时间: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (remainingTime <= 300) { // 剩余5分钟
+          examTimer.style.backgroundColor = '#F56C6C';
+        }
+        
+        if (remainingTime <= 0) {
+          // 时间到，自动交卷
+          clearInterval(timerInterval);
+          submitExam();
+        } else {
+          remainingTime--;
+        }
+      }
+      
+      updateTimer();
+      const timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // 初始化事件监听
+    function initEventListeners() {
+      // 交卷按钮点击事件
+      submitExamButton.addEventListener('click', () => {
+        submitModal.style.display = 'flex';
+      });
+      
+      // 取消交卷按钮点击事件
+      cancelSubmitButton.addEventListener('click', () => {
+        submitModal.style.display = 'none';
+      });
+      
+      // 确认交卷按钮点击事件
+      confirmSubmitButton.addEventListener('click', submitExam);
+      
+      // 取消标记按钮点击事件
+      cancelMarkButton.addEventListener('click', () => {
+        markModal.style.display = 'none';
+      });
+      
+      // 确认标记按钮点击事件
+      confirmMarkButton.addEventListener('click', confirmMarkQuestion);
+      
+      // 模拟网络中断
+      document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.key === 'e') { // Ctrl+E
+          toggleErrorMessage();
+        }
+      });
+    }
+
+    // 切换错误消息显示状态
+    function toggleErrorMessage() {
+      if (errorMessage.style.display === 'block') {
+        errorMessage.style.display = 'none';
+      } else {
+        errorMessage.style.display = 'block';
+      }
+    }
+
+    // 提交考试
+    function submitExam() {
+      // 关闭确认对话框
+      submitModal.style.display = 'none';
+      
+      // 模拟提交答案
+      alert('考试已提交！');
+      
+      // 跳转到结果页面
+      window.location.href = 'index-debug.html';
+    }
+
+    // 页面加载时初始化考试
+    window.addEventListener('load', initExam);
+  </script>
+</body>
+</html>

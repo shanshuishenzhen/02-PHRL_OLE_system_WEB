@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业技能等级认证考试系统 - 快速登录</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #303133;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+    }
+    .header {
+      background-color: #304156;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .header p {
+      margin: 10px 0 0;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    .card {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #303133;
+      border-bottom: 1px solid #EBEEF5;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .card-title:before {
+      content: '🚀';
+      margin-right: 8px;
+    }
+    .login-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .login-option {
+      background-color: #f5f7fa;
+      border-radius: 5px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .login-option:hover {
+      background-color: #ecf5ff;
+      transform: translateY(-5px);
+    }
+    .login-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .login-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #303133;
+    }
+    .login-description {
+      font-size: 12px;
+      color: #909399;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #909399;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #409EFF;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .debug-info {
+      background-color: #f0f9eb;
+      border: 1px solid #e1f3d8;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #67C23A;
+    }
+    .debug-info-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .debug-info-title:before {
+      content: '🔧';
+      margin-right: 8px;
+    }
+    .debug-info-content {
+      margin-left: 24px;
+    }
+    .debug-info-content p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1>职业技能等级认证考试系统 - 快速登录</h1>
+      <p>调试模式：无需密码，一键登录各角色账号</p>
+    </div>
+
+    <!-- 调试信息 -->
+    <div class="debug-info">
+      <div class="debug-info-title">调试模式已启用</div>
+      <div class="debug-info-content">
+        <p>此页面仅用于开发和测试环境，请勿在生产环境中使用。</p>
+        <p>点击下方任意账号即可直接登录，无需输入密码。</p>
+        <p>所有操作将被记录在调试日志中。</p>
+      </div>
+    </div>
+
+    <!-- 考生账号 -->
+    <div class="card">
+      <div class="card-title">考生账号</div>
+      <div class="login-grid">
+        <div class="login-option" onclick="quickLogin('student', 'student001')">
+          <div class="login-icon">👨‍🎓</div>
+          <div class="login-title">李同学</div>
+          <div class="login-description">计算机科学 / 大三</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('student', 'student002')">
+          <div class="login-icon">👩‍🎓</div>
+          <div class="login-title">张同学</div>
+          <div class="login-description">软件工程 / 大二</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('student', 'student003')">
+          <div class="login-icon">👨‍🎓</div>
+          <div class="login-title">王同学</div>
+          <div class="login-description">人工智能 / 大四</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('student', 'student004')">
+          <div class="login-icon">👩‍🎓</div>
+          <div class="login-title">赵同学</div>
+          <div class="login-description">网络工程 / 大三</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 考评员账号 -->
+    <div class="card">
+      <div class="card-title">考评员账号</div>
+      <div class="login-grid">
+        <div class="login-option" onclick="quickLogin('teacher', 'teacher001')">
+          <div class="login-icon">👨‍🏫</div>
+          <div class="login-title">陈老师</div>
+          <div class="login-description">Web前端 / 高级讲师</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('teacher', 'teacher002')">
+          <div class="login-icon">👩‍🏫</div>
+          <div class="login-title">林老师</div>
+          <div class="login-description">Java开发 / 副教授</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('teacher', 'teacher003')">
+          <div class="login-icon">👨‍🏫</div>
+          <div class="login-title">黄老师</div>
+          <div class="login-description">Python / 讲师</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('teacher', 'teacher004')">
+          <div class="login-icon">👩‍🏫</div>
+          <div class="login-title">刘老师</div>
+          <div class="login-description">网络安全 / 教授</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管理员账号 -->
+    <div class="card">
+      <div class="card-title">管理员账号</div>
+      <div class="login-grid">
+        <div class="login-option" onclick="quickLogin('admin', 'admin')">
+          <div class="login-icon">👨‍💼</div>
+          <div class="login-title">系统管理员</div>
+          <div class="login-description">超级管理员 / 全部权限</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('admin', 'admin002')">
+          <div class="login-icon">👩‍💼</div>
+          <div class="login-title">教务管理员</div>
+          <div class="login-description">教务处 / 考试管理</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('admin', 'admin003')">
+          <div class="login-icon">👨‍💼</div>
+          <div class="login-title">题库管理员</div>
+          <div class="login-description">教研室 / 题库管理</div>
+        </div>
+        <div class="login-option" onclick="quickLogin('admin', 'admin004')">
+          <div class="login-icon">👩‍💼</div>
+          <div class="login-title">数据分析员</div>
+          <div class="login-description">教务处 / 数据分析</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p><a href="index-main.html">返回主页</a> | <a href="debug-dashboard.html">调试面板</a> | <a href="api-tester.html">API测试工具</a></p>
+      <p>职业技能等级认证考试系统 &copy; 2023 版权所有</p>
+    </div>
+  </div>
+
+  <script>
+    // 快速登录函数
+    function quickLogin(role, username) {
+      console.log(`快速登录: 角色=${role}, 用户名=${username}`);
+      
+      // 模拟登录过程
+      const loginData = {
+        role: role,
+        username: username,
+        // 为超级管理员设置特殊名称
+        name: (role === 'admin' && username === 'admin') ? '超级管理员' : username,
+        timestamp: new Date().toISOString(),
+        debug: true
+      };
+      
+      // 将登录信息存储在本地存储中
+      localStorage.setItem('debug_login_info', JSON.stringify(loginData));
+      
+      // 根据角色跳转到相应的页面
+      switch(role) {
+        case 'student':
+          window.location.href = 'student-demo.html';
+          break;
+        case 'teacher':
+          window.location.href = 'teacher-demo.html';
+          break;
+        case 'admin':
+          window.location.href = 'admin-demo.html';
+          break;
+        default:
+          alert('未知角色类型');
+      }
+    }
+    
+    // 页面加载时检查URL参数，支持通过URL直接登录
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const role = urlParams.get('role');
+      const username = urlParams.get('username');
+      
+      if (role && username) {
+        quickLogin(role, username);
+      }
+    });
+  </script>
+</body>
+</html>

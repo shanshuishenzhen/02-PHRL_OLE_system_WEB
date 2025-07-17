@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统启动器</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #444;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #52c41a;
+            color: white;
+        }
+        .btn-warning {
+            background-color: #faad14;
+            color: white;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status-success {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+        .status-error {
+            background-color: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: #ff4d4f;
+        }
+        .status-warning {
+            background-color: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: #faad14;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>系统启动器</h1>
+        
+        <div class="section">
+            <h2>环境检查</h2>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="checkVirtualEnv()">检查虚拟环境</button>
+                <button class="btn-secondary" onclick="checkDependencies()">检查依赖包</button>
+                <button class="btn-warning" onclick="installMissingDependencies()">安装缺失依赖</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>启动服务</h2>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="startDjangoServer()">启动后端服务</button>
+                <button class="btn-secondary" onclick="startFrontendServer()">启动前端服务</button>
+                <button class="btn-warning" onclick="stopAllServers()">停止所有服务</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>快速访问</h2>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="openDebugDashboard()">打开调试主页</button>
+                <button class="btn-secondary" onclick="openApiTester()">打开API测试工具</button>
+                <button class="btn-warning" onclick="openSwaggerDocs()">打开接口文档</button>
+            </div>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        let djangoServerId = null;
+        let frontendServerId = null;
+
+        async function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        async function checkVirtualEnv() {
+            try {
+                const response = await fetch('/api/debug/check-venv');
+                const data = await response.json();
+                showStatus(data.active ? '虚拟环境已激活' : '虚拟环境未激活', data.active ? 'success' : 'error');
+            } catch (error) {
+                showStatus('检查虚拟环境失败: ' + error.message, 'error');
+            }
+        }
+
+        async function checkDependencies() {
+            try {
+                const response = await fetch('/api/debug/check-dependencies');
+                const data = await response.json();
+                showStatus(data.missing.length === 0 ? '所有依赖包已安装' : `缺失以下依赖包: ${data.missing.join(', ')}`,
+                    data.missing.length === 0 ? 'success' : 'warning');
+            } catch (error) {
+                showStatus('检查依赖包失败: ' + error.message, 'error');
+            }
+        }
+
+        async function installMissingDependencies() {
+            try {
+                const response = await fetch('/api/debug/install-dependencies', { method: 'POST' });
+                const data = await response.json();
+                showStatus(data.success ? '依赖包安装成功' : '依赖包安装失败', data.success ? 'success' : 'error');
+            } catch (error) {
+                showStatus('安装依赖包失败: ' + error.message, 'error');
+            }
+        }
+
+        async function startDjangoServer() {
+            try {
+                const response = await fetch('/api/users/launcher/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'start-django'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    djangoServerId = data.serverId;
+                    showStatus('Django服务启动成功');
+                } else {
+                    showStatus('Django服务启动失败', 'error');
+                }
+            } catch (error) {
+                showStatus('启动Django服务失败: ' + error.message, 'error');
+            }
+        }
+
+        async function startFrontendServer() {
+            try {
+                const response = await fetch('/api/debug/start-frontend', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    frontendServerId = data.serverId;
+                    showStatus('前端服务启动成功');
+                } else {
+                    showStatus('前端服务启动失败', 'error');
+                }
+            } catch (error) {
+                showStatus('启动前端服务失败: ' + error.message, 'error');
+            }
+        }
+
+        async function stopAllServers() {
+            try {
+                if (djangoServerId) {
+                    await fetch(`/api/debug/stop-server/${djangoServerId}`, { method: 'POST' });
+                }
+                if (frontendServerId) {
+                    await fetch(`/api/debug/stop-server/${frontendServerId}`, { method: 'POST' });
+                }
+                djangoServerId = null;
+                frontendServerId = null;
+                showStatus('所有服务已停止');
+            } catch (error) {
+                showStatus('停止服务失败: ' + error.message, 'error');
+            }
+        }
+
+        function openDebugDashboard() {
+            window.open('http://localhost:8000/debug-dashboard.html', '_blank');
+        }
+
+        function openApiTester() {
+            window.open('http://localhost:8000/api-tester.html', '_blank');
+        }
+
+        function openSwaggerDocs() {
+            window.open('http://localhost:8000/swagger/', '_blank');
+        }
+
+        // 页面关闭时自动停止所有服务
+        window.onbeforeunload = async function() {
+            await stopAllServers();
+        };
+    </script>
+</body>
+</html>
