@@ -4,23 +4,23 @@ import subprocess
 import json
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class PythonEnvironment:
     """Python环境配置"""
     min_version: Tuple[int, int] = (3, 8)
-    required_packages: List[str] = None
+    required_packages: List[str] = field(default_factory=list)
 
 @dataclass
 class NodeEnvironment:
     """Node.js环境配置"""
     min_version: int = 16
-    required_packages: Dict[str, List[str]] = None
+    required_packages: Dict[str, List[str]] = field(default_factory=dict)
 
 class EnvironmentError(Exception):
     """环境错误异常基类"""
-    def __init__(self, message: str, error_type: str = None):
+    def __init__(self, message: Optional[str] = None, error_type: Optional[str] = None):
         super().__init__(message)
         self.error_type = error_type
 
@@ -56,7 +56,7 @@ class ConfigurationError(EnvironmentError):
 
 class EnvironmentManager:
     """环境管理器"""
-    def __init__(self, project_root: Path, logger, config_path: Path = None):
+    def __init__(self, project_root: Path, logger, config_path: Optional[Path] = None):
         self.project_root = project_root
         self.backend_dir = project_root / 'backend'
         self.frontend_dir = project_root / 'frontend'
@@ -594,24 +594,27 @@ class EnvironmentManager:
 
                     # 实时显示安装进度
                     while True:
-                        output = process.stdout.readline()
-                        if output == '' and process.poll() is not None:
+                        if process.stdout is not None:
+                            output = process.stdout.readline()
+                            if output == '' and process.poll() is not None:
+                                break
+                            if output:
+                                line = output.strip()
+                                if 'error' in line.lower():
+                                    self.logger.error(f"❌ {line}")
+                                elif 'warning' in line.lower():
+                                    self.logger.warning(f"⚠️ {line}")
+                                elif any(keyword in line.lower() for keyword in ['collecting', 'downloading', 'installing']):
+                                    self.logger.info(f"📥 {line}")
+                                else:
+                                    self.logger.debug(f"ℹ️ {line}")
+                        else:
                             break
-                        if output:
-                            line = output.strip()
-                            if 'error' in line.lower():
-                                self.logger.error(f"❌ {line}")
-                            elif 'warning' in line.lower():
-                                self.logger.warning(f"⚠️ {line}")
-                            elif any(keyword in line.lower() for keyword in ['collecting', 'downloading', 'installing']):
-                                self.logger.info(f"📥 {line}")
-                            else:
-                                self.logger.debug(f"ℹ️ {line}")
 
                     # 获取最终结果
                     return_code = process.poll()
                     if return_code != 0:
-                        error_output = process.stderr.read()
+                        error_output = process.stderr.read() if process.stderr is not None else ''
                         raise RuntimeError(f"安装失败: {error_output}")
 
                     # 验证安装结果
@@ -701,22 +704,25 @@ class EnvironmentManager:
                 )
 
                 while True:
-                    output = process.stdout.readline()
-                    if output == '' and process.poll() is not None:
+                    if process.stdout is not None:
+                        output = process.stdout.readline()
+                        if output == '' and process.poll() is not None:
+                            break
+                        if output:
+                            line = output.strip()
+                            if 'npm' in line.lower():
+                                if 'err' in line.lower():
+                                    self.logger.error(f"❌ {line}")
+                                elif 'warn' in line.lower():
+                                    self.logger.warning(f"⚠️ {line}")
+                                else:
+                                    self.logger.info(f"ℹ️ {line}")
+                    else:
                         break
-                    if output:
-                        line = output.strip()
-                        if 'npm' in line.lower():
-                            if 'err' in line.lower():
-                                self.logger.error(f"❌ {line}")
-                            elif 'warn' in line.lower():
-                                self.logger.warning(f"⚠️ {line}")
-                            else:
-                                self.logger.info(f"ℹ️ {line}")
 
                 return_code = process.poll()
                 if return_code != 0:
-                    error_output = process.stderr.read()
+                    error_output = process.stderr.read() if process.stderr is not None else ''
                     raise RuntimeError(f"安装失败: {error_output}")
 
                 self.logger.info("✅ 前端依赖安装完成")
@@ -780,3 +786,97 @@ class EnvironmentManager:
 
         except Exception:
             return []
+
+    def check_postgresql_connection(self) -> bool:
+        """检测PostgreSQL数据库连接状态（通过Django配置自动适配）"""
+        try:
+            import importlib
+            import socket
+            # 读取Django settings
+            settings_path = self.backend_dir / 'exam_system' / 'settings.py'
+            db_host = 'localhost'
+            db_port = 5432
+            db_engine = None
+            db_name = ''
+            db_user = ''
+            db_password = ''
+            # 解析settings.py
+            with open(settings_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            for i, line in enumerate(lines):
+                if "'ENGINE'" in line and 'postgresql' in line:
+                    db_engine = 'postgresql'
+                if "'HOST'" in line:
+                    db_host = line.split(':')[-1].replace("'", '').replace(',', '').strip()
+                if "'PORT'" in line:
+                    db_port = int(line.split(':')[-1].replace("'", '').replace(',', '').strip())
+                if "'NAME'" in line:
+                    db_name = line.split(':')[-1].replace("'", '').replace(',', '').strip()
+                if "'USER'" in line:
+                    db_user = line.split(':')[-1].replace("'", '').replace(',', '').strip()
+                if "'PASSWORD'" in line:
+                    db_password = line.split(':')[-1].replace("'", '').replace(',', '').strip()
+            # 仅检测端口可达性
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            try:
+                sock.connect((db_host, db_port))
+                sock.close()
+                self.logger.info(f"✅ PostgreSQL数据库({db_host}:{db_port})连接正常")
+                return True
+            except Exception as e:
+                self.logger.error(f"❌ PostgreSQL数据库({db_host}:{db_port})无法连接: {str(e)}")
+                return False
+        except Exception as e:
+            self.logger.error(f"❌ 检查PostgreSQL连接时发生错误: {str(e)}")
+            return False
+
+    def check_redis_connection(self) -> bool:
+        """检测Redis服务连接状态（通过settings.py自动适配）"""
+        try:
+            import socket
+            redis_host = 'localhost'
+            redis_port = 6379
+            # 读取settings.py
+            settings_path = self.backend_dir / 'exam_system' / 'settings.py'
+            with open(settings_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            for line in lines:
+                if 'REDIS_HOST' in line:
+                    redis_host = line.split(',')[0].split('"')[-2]
+                if 'REDIS_PORT' in line:
+                    redis_port = int(line.split(',')[0].split('"')[-2])
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            try:
+                sock.connect((redis_host, redis_port))
+                sock.close()
+                self.logger.info(f"✅ Redis服务({redis_host}:{redis_port})连接正常")
+                return True
+            except Exception as e:
+                self.logger.error(f"❌ Redis服务({redis_host}:{redis_port})无法连接: {str(e)}")
+                return False
+        except Exception as e:
+            self.logger.error(f"❌ 检查Redis连接时发生错误: {str(e)}")
+            return False
+
+    def check_websocket_connection(self) -> bool:
+        """检测WebSocket服务端口可用性（假定为Django Channels默认端口）"""
+        try:
+            import socket
+            ws_host = 'localhost'
+            ws_port = 8001  # 假定Daphne/Channels默认端口
+            # 可根据实际配置调整
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            try:
+                sock.connect((ws_host, ws_port))
+                sock.close()
+                self.logger.info(f"✅ WebSocket服务({ws_host}:{ws_port})端口可用")
+                return True
+            except Exception as e:
+                self.logger.error(f"❌ WebSocket服务({ws_host}:{ws_port})端口不可用: {str(e)}")
+                return False
+        except Exception as e:
+            self.logger.error(f"❌ 检查WebSocket端口时发生错误: {str(e)}")
+            return False
