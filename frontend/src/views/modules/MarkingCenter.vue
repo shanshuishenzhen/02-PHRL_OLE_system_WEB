@@ -72,12 +72,12 @@
                     <div class="question-content">
                       <div class="student-answer">
                         <h4>学生答案：</h4>
-                        <div class="answer-content" v-html="question.answer"></div>
+                        <div class="answer-content" v-html="sanitizeHTML(question.answer)"></div>
                       </div>
 
                       <div class="reference-answer">
                         <h4>参考答案：</h4>
-                        <div class="answer-content" v-html="question.referenceAnswer"></div>
+                        <div class="answer-content" v-html="sanitizeHTML(question.referenceAnswer)"></div>
                       </div>
 
                       <div class="scoring">
@@ -120,6 +120,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
+import { sanitizeHTML } from '@/utils/sanitize'
 
 export default defineComponent({
   name: 'MarkingCenter',
@@ -208,7 +209,8 @@ export default defineComponent({
       loadPrevious,
       loadNext,
       savePaper,
-      submitPaper
+      submitPaper,
+      sanitizeHTML
     }
   }
 })

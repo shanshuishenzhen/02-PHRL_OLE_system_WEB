@@ -13,6 +13,7 @@
     "@ant-design/icons": "^6.0.0",
     "antd": "^5.26.5",
     "axios": "^1.10.0",
+    "dompurify": "^3.2.6",
     "element-plus": "^2.10.4",
     "html2canvas": "^1.4.1",
     "pinia": "^2.1.0",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
+    "@types/dompurify": "^3.0.5",
     "@types/html2canvas": "^0.5.35",
     "@types/node": "^24.0.14",
     "@types/react": "^18.2.48",
