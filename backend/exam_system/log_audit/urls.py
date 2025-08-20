@@ -1,8 +1,10 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import LogViewSet
+
+router = DefaultRouter()
+router.register(r'', LogViewSet, basename='log')
 
 urlpatterns = [
-    # 这里将添加日志审计的路由
-    # path('login', views.login_logs, name='login_logs'),
-    # path('operation', views.operation_logs, name='operation_logs'),
+    path('', include(router.urls)),
 ]

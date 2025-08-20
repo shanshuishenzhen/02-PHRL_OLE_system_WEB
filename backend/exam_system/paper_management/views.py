@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from django.db import transaction
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+import pandas as pd
+from django.http import HttpResponse
 from .models import PaperTemplate, PaperSection, SectionRule, Paper, PaperQuestion, PaperGeneration
 from .serializers import (
     PaperTemplateSerializer, PaperTemplateCreateSerializer,
@@ -174,6 +176,55 @@ class PaperViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(new_paper)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def export_exam_plans(self, request):
+        """导出考试计划"""
+        papers = self.get_queryset()
+        data = []
+        for paper in papers:
+            data.append({
+                '考试名称': paper.title,
+                '考试时间': paper.created_at,
+                '考试时长': paper.duration,
+                '考试科目': paper.subject,
+                '考试类型': '理论考试', # Assuming a default value
+                '考试人数': paper.questions.count(), # Example, might need adjustment
+                '及格线': paper.passing_score,
+                '考试规则': paper.description
+            })
+
+        df = pd.DataFrame(data)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="exam_plans.xlsx"'
+        df.to_excel(response, index=False, engine='openpyxl')
+        return response
+
+    @action(detail=False, methods=['post'])
+    def import_exam_plans(self, request):
+        """导入考试计划"""
+        file = request.FILES.get('file')
+        if not file:
+            return Response({'detail': '请上传文件'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            df = pd.read_excel(file)
+            papers_to_create = []
+            for index, row in df.iterrows():
+                papers_to_create.append(Paper(
+                    title=row['考试名称'],
+                    description=row['考试规则'],
+                    subject=row['考试科目'],
+                    duration=row['考试时长'],
+                    passing_score=row['及格线'],
+                    created_by=request.user,
+                    status='draft'
+                ))
+
+            Paper.objects.bulk_create(papers_to_create)
+            return Response({'detail': '导入成功'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'detail': f'导入失败: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PaperQuestionViewSet(viewsets.ModelViewSet):

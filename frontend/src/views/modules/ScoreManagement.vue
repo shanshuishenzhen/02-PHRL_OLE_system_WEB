@@ -6,7 +6,7 @@
         <div class="filter-form">
           <el-form :model="filterForm" inline>
             <el-form-item label="考试名称">
-              <el-select v-model="filterForm.examId" placeholder="选择考试">
+              <el-select v-model="filterForm.exam" placeholder="选择考试" clearable>
                 <el-option
                   v-for="exam in examList"
                   :key="exam.id"
@@ -16,27 +16,16 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="班级">
-              <el-select v-model="filterForm.classId" placeholder="选择班级">
-                <el-option
-                  v-for="cls in classList"
-                  :key="cls.id"
-                  :label="cls.name"
-                  :value="cls.id"
-                />
-              </el-select>
-            </el-form-item>
-
             <el-form-item label="成绩范围">
               <el-input-number
-                v-model="filterForm.minScore"
+                v-model="filterForm.total_score__gte"
                 :min="0"
                 :max="100"
                 placeholder="最低分"
               />
               <span class="separator">-</span>
               <el-input-number
-                v-model="filterForm.maxScore"
+                v-model="filterForm.total_score__lte"
                 :min="0"
                 :max="100"
                 placeholder="最高分"
@@ -44,7 +33,7 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="searchScores">搜索</el-button>
+              <el-button type="primary" @click="searchScores" :loading="isLoading">搜索</el-button>
               <el-button @click="resetFilter">重置</el-button>
               <el-button type="success" @click="exportScores">导出成绩</el-button>
             </el-form-item>
@@ -69,18 +58,25 @@
               :data="scores"
               style="width: 100%"
               @selection-change="handleSelectionChange"
+              v-loading="isLoading"
             >
               <el-table-column type="selection" width="55" />
-              <el-table-column prop="studentId" label="学号" width="120" />
-              <el-table-column prop="name" label="姓名" width="100" />
-              <el-table-column prop="className" label="班级" width="120" />
-              <el-table-column prop="score" label="成绩" width="100">
+              <el-table-column prop="exam_record.student.username" label="学号" width="120" />
+              <el-table-column prop="exam_record.student.username" label="姓名" width="100" />
+              <el-table-column prop="exam.name" label="考试科目" width="180" />
+              <el-table-column prop="total_score" label="成绩" width="100">
                 <template #default="{ row }">
-                  <span :class="getScoreClass(row.score)">{{ row.score }}</span>
+                  <span :class="getScoreClass(row.total_score)">{{ row.total_score }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="rank" label="排名" width="80" />
-              <el-table-column prop="submitTime" label="提交时间" width="180" />
+              <el-table-column prop="is_passed" label="是否及格" width="100">
+                <template #default="{ row }">
+                    <el-tag :type="row.is_passed ? 'success' : 'danger'">
+                        {{ row.is_passed ? '是' : '否' }}
+                    </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="marked_at" label="批改时间" width="180" />
               <el-table-column prop="status" label="状态" width="100">
                 <template #default="{ row }">
                   <el-tag :type="getStatusType(row.status)">
@@ -156,60 +152,51 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
+import { getScoreSheets, exportScores, ScoreSheet } from '@/api/score';
+import { ElMessage } from 'element-plus';
 
 export default defineComponent({
   name: 'ScoreManagement',
   setup() {
     const filterForm = ref({
-      examId: '',
-      classId: '',
-      minScore: null,
-      maxScore: null
+      exam: '',
+      // classId: '', // Filtering by class might need a separate API
+      total_score__gte: null,
+      total_score__lte: null
     })
 
+    // Mock data for filters - in a real app, this would come from an API
     const examList = ref([
       { id: '1', name: '2024春季计算机基础期末考试' },
       { id: '2', name: '软件工程期末考试' }
     ])
 
-    const classList = ref([
-      { id: '1', name: '计算机2401班' },
-      { id: '2', name: '计算机2402班' }
-    ])
+    const scores = ref<ScoreSheet[]>([])
+    const isLoading = ref(false);
 
-    const scores = ref([
-      {
-        studentId: '2024001',
-        name: '张三',
-        className: '计算机2401班',
-        score: 85,
-        rank: 10,
-        submitTime: '2024-03-15 11:30:00',
-        status: '已批改'
-      },
-      {
-        studentId: '2024002',
-        name: '李四',
-        className: '计算机2401班',
-        score: 92,
-        rank: 5,
-        submitTime: '2024-03-15 11:25:00',
-        status: '已批改'
-      }
-    ])
-
-    const statistics = ref({
-      average: 78.5,
-      highest: 98,
-      lowest: 45,
-      passRate: 85
-    })
+    const statistics = computed(() => {
+        if (scores.value.length === 0) {
+            return { average: 0, highest: 0, lowest: 0, passRate: 0 };
+        }
+        const totalScores = scores.value.map(s => s.total_score);
+        const highest = Math.max(...totalScores);
+        const lowest = Math.min(...totalScores);
+        const average = totalScores.reduce((a, b) => a + b, 0) / scores.value.length;
+        const passCount = scores.value.filter(s => s.is_passed).length;
+        const passRate = (passCount / scores.value.length) * 100;
+        return {
+            average: parseFloat(average.toFixed(1)),
+            highest,
+            lowest,
+            passRate: parseFloat(passRate.toFixed(1))
+        };
+    });
 
     const currentPage = ref(1)
     const pageSize = ref(10)
-    const total = ref(100)
-    const selectedScores = ref([])
+    const total = ref(0)
+    const selectedScores = ref<ScoreSheet[]>([])
 
     const getScoreClass = (score: number) => {
       if (score >= 90) return 'score excellent'
@@ -219,9 +206,10 @@ export default defineComponent({
 
     const getStatusType = (status: string) => {
       const types: { [key: string]: string } = {
-        '已批改': 'success',
-        '待批改': 'warning',
-        '缺考': 'danger'
+        'completed': 'success',
+        'reviewed': 'success',
+        'in_progress': 'warning',
+        'pending': 'info'
       }
       return types[status] || 'info'
     }
@@ -232,68 +220,107 @@ export default defineComponent({
       return '#F56C6C'
     }
 
-    const searchScores = () => {
-      console.log('搜索成绩:', filterForm.value)
+    const searchScores = async () => {
+        isLoading.value = true;
+        try {
+            // Remove null/empty values from filter
+            const validFilters = Object.entries(filterForm.value).reduce((acc, [key, value]) => {
+                if (value !== null && value !== '') {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {} as Record<string, any>);
+
+            const response = await getScoreSheets(validFilters);
+            scores.value = response;
+            total.value = response.length; // Assuming API does not support pagination for now
+        } catch (error) {
+            ElMessage.error('搜索成绩失败');
+            console.error(error);
+        } finally {
+            isLoading.value = false;
+        }
     }
 
     const resetFilter = () => {
       filterForm.value = {
-        examId: '',
-        classId: '',
-        minScore: null,
-        maxScore: null
+        exam: '',
+        total_score__gte: null,
+        total_score__lte: null
       }
+      searchScores();
     }
 
-    const exportScores = () => {
-      console.log('导出成绩')
+    const handleExportScores = async () => {
+        try {
+            const blob = await exportScores(filterForm.value);
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'scores.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            ElMessage.success('导出成功');
+        } catch (error) {
+            ElMessage.error('导出失败');
+            console.error(error);
+        }
     }
+
+    onMounted(() => {
+        searchScores();
+    });
 
     const batchEdit = () => {
       console.log('批量修改成绩:', selectedScores.value)
+      ElMessage.info('此功能待开发');
     }
 
     const refreshScores = () => {
-      console.log('刷新成绩列表')
+      searchScores();
     }
 
-    const handleSelectionChange = (val: any[]) => {
+    const handleSelectionChange = (val: ScoreSheet[]) => {
       selectedScores.value = val
     }
 
-    const editScore = (score: any) => {
+    const editScore = (score: ScoreSheet) => {
       console.log('修改成绩:', score)
+      ElMessage.info('此功能待开发');
     }
 
-    const viewDetail = (score: any) => {
+    const viewDetail = (score: ScoreSheet) => {
       console.log('查看成绩详情:', score)
+      ElMessage.info('此功能待开发');
     }
 
     const handleSizeChange = (val: number) => {
       pageSize.value = val
-      searchScores()
+      // searchScores() // Re-enable if API supports pagination
     }
 
     const handleCurrentChange = (val: number) => {
       currentPage.value = val
-      searchScores()
+      // searchScores() // Re-enable if API supports pagination
     }
 
     return {
       filterForm,
       examList,
-      classList,
       scores,
       statistics,
       currentPage,
       pageSize,
       total,
+      isLoading,
       getScoreClass,
       getStatusType,
       getProgressColor,
       searchScores,
       resetFilter,
-      exportScores,
+      exportScores: handleExportScores,
       batchEdit,
       refreshScores,
       handleSelectionChange,

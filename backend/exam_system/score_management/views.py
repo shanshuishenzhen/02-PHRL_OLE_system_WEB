@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from django.utils import timezone
+import pandas as pd
+from django.http import HttpResponse
 
 from exam_system.common.permissions import IsTeacherOrAdmin, IsStudent
 from exam_system.exam_monitoring.models import Exam, ExamRecord
@@ -214,6 +216,40 @@ class ScoreSheetViewSet(viewsets.ModelViewSet):
                 ScoreStatistics.objects.create(exam=exam).update_statistics()
         
         return Response({"detail": f"成功创建 {created_count} 个评分表"}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'])
+    def export_scores(self, request):
+        """导出成绩"""
+        # Students cannot export scores
+        if not request.user.is_staff and not request.user.is_teacher:
+            return Response({"detail": "没有权限执行此操作"}, status=status.HTTP_403_FORBIDDEN)
+
+        score_sheets = self.filter_queryset(self.get_queryset())
+
+        data = []
+        for sheet in score_sheets:
+            # This is a simplified example. A real implementation would need to handle ranking and certificate numbers.
+            # Ranking might require querying ScoreStatistics.
+            # Certificate numbers would likely be generated or retrieved from another model.
+            item_scores = {f"题目{item.question.order}": item.score for item in sheet.score_items.all()}
+
+            data.append({
+                '考生ID': sheet.exam_record.student.username,
+                '考生姓名': sheet.exam_record.student.get_full_name() or sheet.exam_record.student.username,
+                '考试科目': sheet.exam.name,
+                '考试时间': sheet.exam_record.submitted_at,
+                '总分': sheet.total_score,
+                **item_scores,
+                '是否及格': sheet.is_passed,
+                '排名': 'N/A', # Placeholder
+                '证书编号': 'N/A' # Placeholder
+            })
+
+        df = pd.DataFrame(data)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="scores.xlsx"'
+        df.to_excel(response, index=False, engine='openpyxl')
+        return response
 
 
 class ScoreItemViewSet(viewsets.ModelViewSet):

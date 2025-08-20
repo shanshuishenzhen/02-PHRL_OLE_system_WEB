@@ -2,6 +2,7 @@
   <div class="exam-paper">
     <h1>试卷管理</h1>
     <div class="module-content">
+      <input type="file" ref="fileInput" @change="handleFileChange" style="display: none" accept=".xlsx, .xls" />
       <el-row :gutter="20">
         <el-col :span="16">
           <el-card class="paper-list">
@@ -9,6 +10,8 @@
               <div class="card-header">
                 <h3>试卷列表</h3>
                 <div class="header-actions">
+                  <el-button type="info" @click="handleImport">导入计划</el-button>
+                  <el-button type="warning" @click="handleExport">导出计划</el-button>
                   <el-button type="success" @click="generatePaper">智能组卷</el-button>
                   <el-button type="primary" @click="createPaper">新建试卷</el-button>
                 </div>
@@ -16,19 +19,23 @@
             </template>
             
             <el-table :data="papers" style="width: 100%">
-              <el-table-column prop="name" label="试卷名称" />
+              <el-table-column prop="title" label="试卷名称" />
               <el-table-column prop="subject" label="科目" width="120" />
-              <el-table-column prop="totalScore" label="总分" width="80" />
+              <el-table-column prop="total_score" label="总分" width="80" />
               <el-table-column prop="duration" label="时长" width="100">
                 <template #default="{ row }">
                   {{ row.duration }}分钟
                 </template>
               </el-table-column>
-              <el-table-column prop="questionCount" label="题目数" width="100" />
+              <el-table-column label="题目数" width="100">
+                <template #default="{ row }">
+                  {{ row.questions ? row.questions.length : 0 }}
+                </template>
+              </el-table-column>
               <el-table-column prop="status" label="状态" width="100">
                 <template #default="{ row }">
-                  <el-tag :type="row.status === '已发布' ? 'success' : 'info'">
-                    {{ row.status }}
+                  <el-tag :type="row.status === 'published' ? 'success' : 'info'">
+                    {{ row.status === 'published' ? '已发布' : (row.status === 'draft' ? '草稿' : '已归档') }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -87,55 +94,109 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue';
+import { getPapers, publishPaper, unpublishPaper, Paper, importExamPlans, exportExamPlans } from '@/api/paper';
+import { ElMessage } from 'element-plus';
 
 export default defineComponent({
   name: 'ExamPaper',
   setup() {
-    const papers = ref([
-      {
-        name: '2024春季计算机基础期末考试',
-        subject: '计算机基础',
-        totalScore: 100,
-        duration: 120,
-        questionCount: 50,
-        status: '已发布'
-      },
-      {
-        name: '软件工程模拟试卷A',
-        subject: '软件工程',
-        totalScore: 100,
-        duration: 90,
-        questionCount: 40,
-        status: '草稿'
-      }
-    ])
+    const papers = ref<Paper[]>([]);
+    const fileInput = ref<HTMLInputElement | null>(null);
 
-    const stats = ref({
-      totalPapers: 25,
-      publishedPapers: 15,
-      draftPapers: 10
-    })
+    const stats = computed(() => {
+      const totalPapers = papers.value.length;
+      const publishedPapers = papers.value.filter(p => p.status === 'published').length;
+      const draftPapers = papers.value.filter(p => p.status === 'draft').length;
+      return { totalPapers, publishedPapers, draftPapers };
+    });
+
+    const fetchPapers = async () => {
+      try {
+        const response = await getPapers();
+        papers.value = response;
+      } catch (error) {
+        ElMessage.error('获取试卷列表失败');
+        console.error(error);
+      }
+    };
+
+    onMounted(() => {
+      fetchPapers();
+    });
+
+    const handleExport = async () => {
+        try {
+            const blob = await exportExamPlans();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'exam_plans.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            ElMessage.success('导出成功');
+        } catch (error) {
+            ElMessage.error('导出失败');
+            console.error(error);
+        }
+    };
+
+    const handleFileChange = async (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        if (target.files && target.files[0]) {
+            const file = target.files[0];
+            try {
+                await importExamPlans(file);
+                ElMessage.success('导入成功');
+                await fetchPapers(); // Refresh list
+            } catch (error) {
+                ElMessage.error('导入失败');
+                console.error(error);
+            }
+        }
+    };
+
+    const handleImport = () => {
+        fileInput.value?.click();
+    };
 
     const generatePaper = () => {
-      console.log('智能组卷')
-    }
+      console.log('智能组卷');
+      ElMessage.info('此功能待开发');
+    };
 
     const createPaper = () => {
-      console.log('新建试卷')
-    }
+      console.log('新建试卷');
+      ElMessage.info('此功能待开发');
+    };
 
-    const editPaper = (paper: any) => {
-      console.log('编辑试卷:', paper)
-    }
+    const editPaper = (paper: Paper) => {
+      console.log('编辑试卷:', paper);
+      ElMessage.info('此功能待开发');
+    };
 
-    const previewPaper = (paper: any) => {
-      console.log('预览试卷:', paper)
-    }
+    const previewPaper = (paper: Paper) => {
+      console.log('预览试卷:', paper);
+      ElMessage.info('此功能待开发');
+    };
 
-    const togglePaperStatus = (paper: any) => {
-      console.log('切换试卷状态:', paper)
-    }
+    const togglePaperStatus = async (paper: Paper) => {
+      try {
+        if (paper.status === 'published') {
+          await unpublishPaper(paper.id);
+          ElMessage.success('试卷已撤回');
+        } else {
+          await publishPaper(paper.id);
+          ElMessage.success('试卷已发布');
+        }
+        await fetchPapers(); // Refresh the list
+      } catch (error) {
+        ElMessage.error('操作失败');
+        console.error(error);
+      }
+    };
 
     return {
       papers,
@@ -144,10 +205,14 @@ export default defineComponent({
       createPaper,
       editPaper,
       previewPaper,
-      togglePaperStatus
-    }
+      togglePaperStatus,
+      handleImport,
+      handleExport,
+      handleFileChange,
+      fileInput
+    };
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>
