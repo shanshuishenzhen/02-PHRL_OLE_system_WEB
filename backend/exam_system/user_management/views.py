@@ -11,7 +11,7 @@ from .serializers import (
     DepartmentSerializer, ClassSerializer
 )
 from .authentication import JWTAuthentication
-from .permissions import IsAdminUser, IsSelfOrAdmin
+from exam_system.permissions import IsAdminUser, IsSelfOrAdmin
 
 User = get_user_model()
 

@@ -13,7 +13,7 @@ from .serializers import (
     KnowledgePointSerializer, QuestionSerializer, QuestionDetailSerializer,
     QuestionImportSerializer
 )
-from exam_system.user_management.permissions import IsAdminOrTeacherUser
+from exam_system.permissions import IsAdminOrTeacherUser
 
 
 class QuestionBankViewSet(viewsets.ModelViewSet):
@@ -26,6 +26,23 @@ class QuestionBankViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'subject', 'description']
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        """
+        Admins can see all question banks.
+        Teachers can only see question banks they created.
+        """
+        user = self.request.user
+        if user.is_admin:
+            return QuestionBank.objects.all()
+        elif user.is_teacher:
+            # Assuming QuestionBank has a 'created_by' field.
+            return QuestionBank.objects.filter(created_by=user)
+        return QuestionBank.objects.none()
+
+    def perform_create(self, serializer):
+        """Set the creator of the question bank to the current user."""
+        serializer.save(created_by=self.request.user)
     
     @action(detail=True, methods=['get'])
     def questions(self, request, pk=None):
@@ -122,6 +139,23 @@ class KnowledgePointViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['subject', 'parent']
     search_fields = ['name', 'description']
+
+    def get_queryset(self):
+        """
+        Admins can see all knowledge points.
+        Teachers can only see knowledge points they created.
+        """
+        user = self.request.user
+        if user.is_admin:
+            return KnowledgePoint.objects.all()
+        elif user.is_teacher:
+            # Assuming KnowledgePoint has a 'created_by' field.
+            return KnowledgePoint.objects.filter(created_by=user)
+        return KnowledgePoint.objects.none()
+
+    def perform_create(self, serializer):
+        """Set the creator of the knowledge point to the current user."""
+        serializer.save(created_by=self.request.user)
     
     @action(detail=False, methods=['get'])
     def tree(self, request):
@@ -155,6 +189,23 @@ class QuestionViewSet(viewsets.ModelViewSet):
     search_fields = ['content', 'answer', 'analysis']
     ordering_fields = ['created_at', 'updated_at', 'score']
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        """
+        Admins can see all questions.
+        Teachers can only see questions they created.
+        """
+        user = self.request.user
+        if user.is_admin:
+            return Question.objects.all()
+        elif user.is_teacher:
+            # Assuming Question has a 'created_by' field.
+            return Question.objects.filter(created_by=user)
+        return Question.objects.none()
+
+    def perform_create(self, serializer):
+        """Set the creator of the question to the current user."""
+        serializer.save(created_by=self.request.user)
     
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update', 'retrieve']:

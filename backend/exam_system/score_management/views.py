@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from django.utils import timezone
 
-from exam_system.common.permissions import IsTeacherOrAdmin, IsStudent
+from exam_system.permissions import IsAdminOrTeacherUser, IsStudentUser
 from exam_system.exam_monitoring.models import Exam, ExamRecord
 
 from .models import (
@@ -25,7 +25,7 @@ from .serializers import (
 class ScoringCriteriaViewSet(viewsets.ModelViewSet):
     """评分标准视图集"""
     queryset = ScoringCriteria.objects.all()
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    permission_classes = [IsAuthenticated, IsAdminOrTeacherUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['created_by']
     search_fields = ['name', 'description']
@@ -45,7 +45,7 @@ class ScoringRuleViewSet(viewsets.ModelViewSet):
     """评分规则视图集"""
     queryset = ScoringRule.objects.all()
     serializer_class = ScoringRuleSerializer
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    permission_classes = [IsAuthenticated, IsAdminOrTeacherUser]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['criteria', 'question_type', 'auto_score']
     ordering_fields = ['criteria', 'question_type']

@@ -77,7 +77,11 @@ class KnowledgePoint(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
                               related_name='children', verbose_name=_('父级知识点'))
     description = models.TextField(_('描述'), blank=True)
-    
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_knowledge_points',
+                                  verbose_name=_('创建人'))
+    created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('更新时间'), auto_now=True)
+
     class Meta:
         verbose_name = _('知识点')
         verbose_name_plural = _('知识点')

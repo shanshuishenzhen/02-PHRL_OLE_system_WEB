@@ -43,9 +43,9 @@ urlpatterns = [
     path('api/analysis/', include('exam_system.data_analysis.urls')),
     
     # 调试相关API
-    path('api/debug/check-venv/', include('exam_system.common.debug_urls')),
-    path('api/debug/check-dependencies/', include('exam_system.common.debug_urls')),
-    path('api/debug/install-dependencies/', include('exam_system.common.debug_urls')),
+    # path('api/debug/check-venv/', include('exam_system.common.debug_urls')),
+    # path('api/debug/check-dependencies/', include('exam_system.common.debug_urls')),
+    # path('api/debug/install-dependencies/', include('exam_system.common.debug_urls')),
     path('api/debug/system-status/', SystemStatusView.as_view(), name='system-status'),
     
     # 静态HTML文件路由

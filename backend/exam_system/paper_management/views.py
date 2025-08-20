@@ -13,7 +13,7 @@ from .serializers import (
     PaperGenerationSerializer, PaperGenerationCreateSerializer
 )
 from exam_system.question_bank.models import Question
-from exam_system.user_management.permissions import IsAdminOrTeacherUser
+from exam_system.permissions import IsAdminOrTeacherUser
 import random
 
 
@@ -26,6 +26,18 @@ class PaperTemplateViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description', 'subject']
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        """
+        Admins can see all paper templates.
+        Teachers can only see paper templates they created.
+        """
+        user = self.request.user
+        if user.is_admin:
+            return PaperTemplate.objects.all()
+        elif user.is_teacher:
+            return PaperTemplate.objects.filter(created_by=user)
+        return PaperTemplate.objects.none()
     
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -108,6 +120,22 @@ class PaperViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'subject']
     ordering_fields = ['title', 'created_at', 'updated_at', 'published_at']
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        """
+        Admins can see all papers.
+        Teachers can only see papers they created.
+        """
+        user = self.request.user
+        if user.is_admin:
+            return Paper.objects.all()
+        elif user.is_teacher:
+            return Paper.objects.filter(created_by=user)
+        return Paper.objects.none()
+
+    def perform_create(self, serializer):
+        """Set the creator of the paper to the current user."""
+        serializer.save(created_by=self.request.user)
     
     def get_serializer_class(self):
         if self.action == 'create':

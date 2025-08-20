@@ -19,7 +19,7 @@ from .serializers import (
     ExamAnswerSerializer, ExamSnapshotSerializer,
     ExamNotificationSerializer, ExamNotificationCreateSerializer
 )
-from exam_system.user_management.permissions import (
+from exam_system.permissions import (
     IsAdminUser, IsTeacherUser, IsStudentUser, IsAdminOrTeacherUser
 )
 
