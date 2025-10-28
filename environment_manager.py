@@ -413,8 +413,9 @@ class EnvironmentManager:
                             required_version = installed[pkg].lstrip('^~')
                             try:
                                 # 获取已安装的实际版本
+                                npm_command = 'npm.cmd' if sys.platform == 'win32' else 'npm'
                                 pkg_info = subprocess.run(
-                                    ['powershell', '-Command', f'npm list {pkg} --depth=0 --json'],
+                                    [npm_command, 'list', pkg, '--depth=0', '--json'],
                                     cwd=str(self.frontend_dir),
                                     capture_output=True,
                                     text=True,

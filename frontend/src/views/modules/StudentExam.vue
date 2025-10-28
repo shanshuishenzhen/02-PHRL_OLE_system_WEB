@@ -36,7 +36,7 @@
               </div>
 
               <div class="question-content">
-                <div class="question-text" v-html="question.content"></div>
+                <div class="question-text" v-html="sanitizeHTML(question.content)"></div>
 
                 <div class="answer-area">
                   <!-- 选择题 -->
@@ -186,6 +186,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { sanitizeHTML } from '@/utils/sanitize'
 
 export default defineComponent({
   name: 'StudentExam',
@@ -353,7 +354,8 @@ export default defineComponent({
       navigateQuestion,
       jumpToQuestion,
       showSubmitConfirm,
-      submitExam
+      submitExam,
+      sanitizeHTML
     }
   }
 })
